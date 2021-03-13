@@ -13,3 +13,7 @@ class OrderAdmin(admin.ModelAdmin):
 
     list_display = ['id', 'customer', 'payment_method', 'telephone', 'total', 'order_status']
     search_fields = ['id', 'customer__username', 'telephone']
+
+@admin.register(Service)
+class ServiceAdmin(admin.ModelAdmin):
+    pass
