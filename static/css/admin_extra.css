@@ -1,0 +1,19 @@
+.pending {
+    color: #7e7e7e;
+}
+
+.processing {
+    color: #1974d2;
+}
+
+.canceled {
+    color: #d9512c;
+}
+
+.delivered {
+    color: #64dd17;
+}
+
+.mr {
+    margin-right: 5px;
+}
