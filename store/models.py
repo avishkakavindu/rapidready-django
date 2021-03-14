@@ -123,3 +123,28 @@ class Service(models.Model):
 
     def __str__(self):
         return '{}-{}'.format(self.id, self.service)
+
+
+class Material(models.Model):
+    name = models.TextField(max_length=255)
+    unit_price = models.DecimalField(max_digits=10, decimal_places=2)
+    available_unit = models.PositiveIntegerField()
+    warning_limit = models.PositiveIntegerField()
+
+    def __str__(self):
+        return '{}-{}'.format(self.id, self.name)
+
+
+class Stock(models.Model):
+    stock = models.CharField(max_length=255)
+    supplier = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
+    material = models.ForeignKey(Material, null=True, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '{}-{}'.format(self.id, self.stock)
+
+
+class ServiceMaterial(models.Model):
+    service = models.ForeignKey(Service, null=True, on_delete=models.CASCADE)
+    material = models.ForeignKey(Material, null=True, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField()
