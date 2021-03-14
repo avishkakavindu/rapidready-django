@@ -10,10 +10,25 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-
     list_display = ['id', 'customer', 'payment_method', 'telephone', 'total', 'order_status']
     search_fields = ['id', 'customer__username', 'telephone']
 
+
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Material)
+class MaterialAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Stock)
+class StockAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(ServiceMaterial)
+class ServiceMaterialAdmin(admin.ModelAdmin):
     pass
