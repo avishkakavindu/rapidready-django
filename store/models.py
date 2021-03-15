@@ -134,11 +134,20 @@ class Material(models.Model):
     def __str__(self):
         return '{}-{}'.format(self.id, self.name)
 
+    def available_stock(self):
+        if self.available_unit < self.warning_limit:
+            return format_html(
+                   '<span class="msg">{}<i class ="fa fa-exclamation-triangle ml canceled" aria-hidden="true" > '
+                   'Running low on stock</i></span>'.format(self.available_unit)
+            )
+        return self.available_unit
+
 
 class Stock(models.Model):
     stock = models.CharField(max_length=255)
     supplier = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     material = models.ForeignKey(Material, null=True, on_delete=models.CASCADE)
+    quantity = models.PositiveBigIntegerField()
 
     def __str__(self):
         return '{}-{}'.format(self.id, self.stock)
