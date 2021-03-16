@@ -25,3 +25,7 @@
 .msg {
     font-family: "Roboto", "Lucida Grande", "DejaVu Sans", "Bitstream Vera Sans", Verdana, Arial, sans-serif;
 }
+
+.order-type {
+    color: #17a2b8;
+}
