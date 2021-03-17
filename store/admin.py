@@ -3,24 +3,35 @@ from django.db.models import F
 
 from .models import *
 
+SUPPLIER = 1
+
+
+class SupplierStockInline(admin.StackedInline):
+    """ Inline views of stocks on user based on role supplier """
+    model = Stock
+    extra = 1
+
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     """ user admin """
 
-    list_display = ['id', 'first_name', 'last_name', 'nic', 'telephone', 'role_status']
-    search_fields = ['id', 'fistname', 'lastname', 'nic']
+    list_display = ['id', 'username', 'first_name', 'last_name', 'nic', 'telephone', 'role_status']
+    search_fields = ['id','username', 'fistname', 'lastname', 'nic']
+    inlines = []
+
+    def get_inlines(self, request, obj):
+        if obj.role == SUPPLIER:
+            return [SupplierStockInline]
+        return []
 
 
 class OrderedServiceInline(admin.StackedInline):
     """ Inline views of ordered services """
     model = OrderedService
-    can_delete = False
+    extra = 1
 
     def has_change_permission(self, request, obj=None):
-        return False
-
-    def has_add_permission(self, request, obj=None):
         return False
 
 
@@ -35,10 +46,17 @@ class OrderAdmin(admin.ModelAdmin):
     inlines = [OrderedServiceInline]
 
 
+class ServiceMaterialInline(admin.StackedInline):
+    """ Inline views of services and its materials"""
+    model = ServiceMaterial
+
+
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
     """ Services admin - available services """
-    pass
+    list_display = ['id', 'service', 'desc', 'price']
+    search_fields = ['id', 'service']
+    inlines = [ServiceMaterialInline]
 
 
 @admin.register(OrderedService)
@@ -94,6 +112,16 @@ class StockAdmin(admin.ModelAdmin):
 
 @admin.register(ServiceMaterial)
 class ServiceMaterialAdmin(admin.ModelAdmin):
-    """ Service material admin - materials required by each service| pivot table of service and material  """
+    """ Service material admin - materials required by each service|
+     pivot table of service and material  """
 
-    pass
+    list_display = ['id', 'service', 'material', 'quantity']
+    search_fields = ['id', 'service', 'material']
+    list_filter = ['material' , 'service']
+
+
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ['id', 'user', 'review', 'rating']
+    search_fields = ['id', 'user']
+    list_filter = ['rating']
