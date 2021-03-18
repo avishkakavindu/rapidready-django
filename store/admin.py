@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 from django.db.models import F
 
 from .models import *
@@ -13,7 +14,7 @@ class SupplierStockInline(admin.StackedInline):
 
 
 @admin.register(User)
-class UserAdmin(admin.ModelAdmin):
+class UserAdmin(UserAdmin):
     """ user admin """
 
     list_display = ['id', 'username', 'first_name', 'last_name', 'nic', 'telephone', 'role_status']
