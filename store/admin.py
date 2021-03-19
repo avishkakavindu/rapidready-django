@@ -4,7 +4,7 @@ from django.db.models import F
 
 from .models import *
 
-SUPPLIER = 1
+SUPPLIER = 2
 
 
 class SupplierStockInline(admin.StackedInline):
@@ -32,9 +32,6 @@ class OrderedServiceInline(admin.StackedInline):
     model = OrderedService
     extra = 1
 
-    def has_change_permission(self, request, obj=None):
-        return False
-
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
@@ -45,6 +42,22 @@ class OrderAdmin(admin.ModelAdmin):
     list_filter = ['type', 'status', 'payment_method']
     ordering = ['status']
     inlines = [OrderedServiceInline]
+
+    # field level access read_only_fields
+    production_team_read_only = [   # for production team
+        'customer',
+        'desc',
+        'payment_method',
+        'type',
+        'telephone',
+        'total'
+    ]
+
+    def get_readonly_fields(self, request, obj=None):
+        """ Production team can only change order - status """
+        if request.user.groups.filter(name='production team').exists():
+            return self.production_team_read_only
+        return super(OrderAdmin, self).get_readonly_fields(request, obj=obj)
 
 
 class ServiceMaterialInline(admin.StackedInline):
@@ -87,6 +100,13 @@ class DepletedStockFilter(admin.SimpleListFilter):
             return queryset.filter(available_unit__lte=F('warning_limit'))
 
 
+class MaterialStockInline(admin.StackedInline):
+    """ Inline views of Stocks belongs to Materials """
+    model = Stock
+    extra = 1
+    readonly_fields = ['stock', 'supplier', 'material', 'quantity', 'unit_price']
+
+
 @admin.register(Material)
 class MaterialAdmin(admin.ModelAdmin):
     """ Materials admin - contains the materials and available units """
@@ -94,6 +114,20 @@ class MaterialAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'available_stock', 'warning_limit']
     search_fields = ['id', 'name']
     list_filter = [DepletedStockFilter, 'name']
+    inlines = [MaterialStockInline]
+
+    # field level access read_only_fields
+    store_team_read_only = [  # for production team
+        'name',
+        'available_unit',
+        'warning_limit'
+    ]
+
+    def get_readonly_fields(self, request, obj=None):
+        """ Store team can only change Stock - review and rating """
+        if request.user.groups.filter(name='store team').exists():
+            return self.store_team_read_only
+        return super(MaterialAdmin, self).get_readonly_fields(request, obj=obj)
 
 
 @admin.register(Stock)
@@ -104,11 +138,26 @@ class StockAdmin(admin.ModelAdmin):
     search_fields = ['id', 'stock', 'supplier', 'material']
     list_filter = ['material', 'supplier']
 
+    # field level access read_only_fields
+    store_team_read_only = [  # for production team
+        'stock',
+        'supplier',
+        'material',
+        'quantity',
+        'unit_price',
+    ]
+
     # suppliers only
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "supplier":
             kwargs["queryset"] = User.objects.filter(role='2')
         return super(StockAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+
+    def get_readonly_fields(self, request, obj=None):
+        """ Store team can only change Stock - review and rating """
+        if request.user.groups.filter(name='store team').exists():
+            return self.store_team_read_only
+        return super(StockAdmin, self).get_readonly_fields(request, obj=obj)
 
 
 @admin.register(ServiceMaterial)
