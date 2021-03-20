@@ -17,13 +17,38 @@ class SupplierStockInline(admin.StackedInline):
 class UserAdmin(UserAdmin):
     """ user admin """
 
+    fieldsets = [
+        (None, {'fields': ('username', 'password')}),
+        ('Personal info', {'fields': (
+            'first_name',
+            'last_name',
+            'email',
+            'nic',
+            'address',
+            'telephone',
+            'profile_pic',
+        )}),
+        ('Permissions', {'fields': (
+            'is_active',
+            'is_staff',
+            'is_superuser',
+            'role',
+            'groups',
+            'user_permissions',
+        )}),
+        ('Important dates', {'fields': ('last_login', 'date_joined')})
+    ]
+
     list_display = ['id', 'username', 'first_name', 'last_name', 'nic', 'telephone', 'role_status']
-    search_fields = ['id','username', 'fistname', 'lastname', 'nic']
+    search_fields = ['id', 'username', 'fistname', 'lastname', 'nic']
     inlines = []
 
     def get_inlines(self, request, obj):
-        if obj.role == SUPPLIER:
-            return [SupplierStockInline]
+        try:
+            if obj.role == SUPPLIER:
+                return [SupplierStockInline]
+        except:
+            pass
         return []
 
 
@@ -44,7 +69,7 @@ class OrderAdmin(admin.ModelAdmin):
     inlines = [OrderedServiceInline]
 
     # field level access read_only_fields
-    production_team_read_only = [   # for production team
+    production_team_read_only = [  # for production team
         'customer',
         'desc',
         'payment_method',
@@ -159,6 +184,12 @@ class StockAdmin(admin.ModelAdmin):
             return self.store_team_read_only
         return super(StockAdmin, self).get_readonly_fields(request, obj=obj)
 
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        if not request.user.role == SUPPLIER: \
+                return queryset
+        return queryset.filter(supplier=request.user)
+
 
 @admin.register(ServiceMaterial)
 class ServiceMaterialAdmin(admin.ModelAdmin):
@@ -167,7 +198,7 @@ class ServiceMaterialAdmin(admin.ModelAdmin):
 
     list_display = ['id', 'service', 'material', 'quantity']
     search_fields = ['id', 'service', 'material']
-    list_filter = ['material' , 'service']
+    list_filter = ['material', 'service']
 
 
 @admin.register(Review)
