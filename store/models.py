@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
@@ -36,15 +37,18 @@ class User(AbstractUser):
             return 'Customer'
         if self.role == 2:
             return format_html(
-                '<span style=""><i class="fa fa-truck mr" aria-hidden="true"></i></span>{}'.format(self.get_role_display())
+                '<span style=""><i class="fa fa-truck mr" aria-hidden="true"></i></span>{}'.format(
+                    self.get_role_display())
             )
         elif self.role == 3 or self.role == 5:
             return format_html(
-                '<span style=""><i class="fa fa-user-circle-o mr" aria-hidden="true"></i></span>{}'.format(self.get_role_display())
+                '<span style=""><i class="fa fa-user-circle-o mr" aria-hidden="true"></i></span>{}'.format(
+                    self.get_role_display())
             )
         elif self.role == 4 or self.role == 6:
             return format_html(
-                '<span style=""><i class="fa fa-user-o mr" aria-hidden="true"></i></span>{}'.format(self.get_role_display())
+                '<span style=""><i class="fa fa-user-o mr" aria-hidden="true"></i></span>{}'.format(
+                    self.get_role_display())
             )
         else:
             return format_html(
@@ -53,7 +57,7 @@ class User(AbstractUser):
 
 
 class Order(models.Model):
-    """ Order model """
+    """ Orders model """
     # order types
     PREDEFINED = 1
     CUSTOM = 2
@@ -94,66 +98,131 @@ class Order(models.Model):
     status = models.PositiveSmallIntegerField(choices=ORDER_STATUS, default=PENDING)
 
     def __str__(self):
-        return '{}-{}'.format(self.id, self.customer)
+        return '{}'.format(self.id)
+
+    def order_type(self):
+        if self.status == self.PENDING:
+            if self.type == self.PREDEFINED:
+                return format_html(
+                    '<span style=""><i class="fa fa-bell-o mr order-type" aria-hidden="true"></i></span>{}'.format(
+                        self.get_type_display())
+                )
+            else:
+                return format_html(
+                    '<span style=""><i class="fa fa-bell mr order-type" aria-hidden="true"></i></span>{}'.format(
+                        self.get_type_display())
+                )
+
+        return self.get_type_display()
 
     def order_status(self):
         if self.status == 1:
             return format_html(
-                '<span style=""><i class="fa fa-clock-o pending mr" aria-hidden="true"></i></span>{}'.format(self.get_status_display())
+                '<span style=""><i class="fa fa-clock-o pending mr" aria-hidden="true"></i></span>{}'.format(
+                    self.get_status_display())
             )
         elif self.status == 2:
             return format_html(
-                '<span style=""><i class="fa fa-cogs processing mr" aria-hidden="true"></i></span>{}'.format(self.get_status_display())
+                '<span style=""><i class="fa fa-cogs processing mr" aria-hidden="true"></i></span>{}'.format(
+                    self.get_status_display())
             )
         elif self.status == 3:
             return format_html(
-                '<span style=""><i class="fa fa-truck delivered mr" aria-hidden="true"></i></span>{}'.format(self.get_status_display())
+                '<span style=""><i class="fa fa-truck delivered mr" aria-hidden="true"></i></span>{}'.format(
+                    self.get_status_display())
             )
         else:
             return format_html(
-                '<span style=""><i class="fa fa-ban canceled mr" aria-hidden="true"></i></span>{}'.format(self.get_status_display())
+                '<span style=""><i class="fa fa-ban canceled mr" aria-hidden="true"></i></span>{}'.format(
+                    self.get_status_display())
             )
 
 
 class Service(models.Model):
+    """ RapidReady services model """
+
     service = models.CharField(max_length=255)
     desc = models.TextField()
     image = models.ImageField(upload_to='images/service', default='images/service/default.jpg')
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return '{}-{}'.format(self.id, self.service)
+        return '{}'.format(self.service)
+
+
+class OrderedService(models.Model):
+    """ Ordered services and the quantities model """
+
+    order = models.ForeignKey(Order, null=False, on_delete=models.CASCADE)
+    service = models.ForeignKey(Service, null=False, on_delete=models.CASCADE)
+    quantity = models.PositiveBigIntegerField()
+
+    def __str__(self):
+        return '{}'.format(self.service)
 
 
 class Material(models.Model):
+    """ Total available materials model"""
+
     name = models.TextField(max_length=255)
-    unit_price = models.DecimalField(max_digits=10, decimal_places=2)
     available_unit = models.PositiveIntegerField()
     warning_limit = models.PositiveIntegerField()
 
     def __str__(self):
-        return '{}-{}'.format(self.id, self.name)
+        return '{}'.format(self.name)
 
     def available_stock(self):
         if self.available_unit < self.warning_limit:
             return format_html(
-                   '<span class="msg">{}<i class ="fa fa-exclamation-triangle ml canceled" aria-hidden="true" > '
-                   'Running low on stock</i></span>'.format(self.available_unit)
+                '<span class="msg">{}<i class ="fa fa-exclamation-triangle ml canceled" aria-hidden="true" > '
+                'Running low on stock</i></span>'.format(self.available_unit)
             )
         return self.available_unit
 
 
 class Stock(models.Model):
+    """ Bought stocks from suppliers model """
+
     stock = models.CharField(max_length=255)
     supplier = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
-    material = models.ForeignKey(Material, null=True, on_delete=models.CASCADE)
+    material = models.ForeignKey(Material, null=False, on_delete=models.CASCADE)
     quantity = models.PositiveBigIntegerField()
+    unit_price = models.DecimalField(max_digits=10, decimal_places=2)
+    review = models.TextField(null=True, blank=True)
+    rating = models.DecimalField(
+        max_digits=1,
+        decimal_places=0,
+        default=0,
+        validators=[MinValueValidator(0), MaxValueValidator(5)]
+    )
 
     def __str__(self):
-        return '{}-{}'.format(self.id, self.stock)
+        return '{}'.format(self.stock)
 
 
 class ServiceMaterial(models.Model):
+    """ Materials required by each service model """
+
     service = models.ForeignKey(Service, null=True, on_delete=models.CASCADE)
-    material = models.ForeignKey(Material, null=True, on_delete=models.CASCADE)
+    material = models.ForeignKey(Material, null=False, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
+
+    def __str__(self):
+        return '{}'.format(self.material)
+
+
+class Review(models.Model):
+    """ Review model """
+
+    user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
+    service = models.ForeignKey(Service, null=False, on_delete=models.CASCADE)
+    review = models.TextField(null=True, blank=True)
+    rating = models.DecimalField(
+        max_digits=1,
+        decimal_places=0,
+        default=0,
+        validators=[MinValueValidator(0), MaxValueValidator(5)]
+    )
+
+    def __str__(self):
+        return'{}-{}-{}'.format(self.user, self.review, self.service)
