@@ -8,9 +8,9 @@ SUPPLIER = 2
 
 
 class SupplierStockInline(admin.StackedInline):
-    """ Inline views of stocks on user based on role supplier """
+    """ Inline views of stocks on user, based on role supplier """
     model = Stock
-    extra = 1
+    extra = 0
 
 
 @admin.register(User)
@@ -32,7 +32,6 @@ class UserAdmin(UserAdmin):
             'is_active',
             'is_staff',
             'is_superuser',
-            'role',
             'groups',
             'user_permissions',
         )}),
@@ -40,16 +39,20 @@ class UserAdmin(UserAdmin):
     ]
 
     list_display = ['id', 'username', 'first_name', 'last_name', 'nic', 'telephone', 'role_status']
-    search_fields = ['id', 'username', 'fistname', 'lastname', 'nic']
+    search_fields = ['id', 'username', 'fist_name', 'last_name', 'nic']
     inlines = []
 
-    def get_inlines(self, request, obj):
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        self.inlines = []
+
         try:
-            if obj.role == SUPPLIER:
-                return [SupplierStockInline]
-        except:
+            obj = self.model.objects.get(pk=object_id)
+        except self.model.DoesNotExist:
             pass
-        return []
+        else:
+            if obj.groups.filter(name='supplier').exists():
+                self.inlines = [SupplierStockInline,]
+        return super(UserAdmin, self).change_view(request, object_id, form_url, extra_context)
 
 
 class OrderedServiceInline(admin.StackedInline):
@@ -175,7 +178,7 @@ class StockAdmin(admin.ModelAdmin):
     # suppliers only
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "supplier":
-            kwargs["queryset"] = User.objects.filter(role='2')
+            kwargs["queryset"] = User.objects.filter(groups__name='supplier')
         return super(StockAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
     def get_readonly_fields(self, request, obj=None):
@@ -185,9 +188,11 @@ class StockAdmin(admin.ModelAdmin):
         return super(StockAdmin, self).get_readonly_fields(request, obj=obj)
 
     def get_queryset(self, request):
+        """ role based querying for supplier """
         queryset = super().get_queryset(request)
-        if not request.user.role == SUPPLIER: \
-                return queryset
+        # if the user isn't a supplier
+        if not request.user.groups.filter(name='supplier'):
+            return queryset
         return queryset.filter(supplier=request.user)
 
 
