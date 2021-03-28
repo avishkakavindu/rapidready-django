@@ -1,8 +1,8 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path
 
-from store import views
+from store.views import HomeView
 
 urlpatterns = [
-    path('login/', views.login, name='login'),
+    path('', HomeView.as_view(), name="home"),
     ]
