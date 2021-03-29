@@ -96,7 +96,7 @@ class ServiceMaterialInline(admin.StackedInline):
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
     """ Services admin - available services """
-    list_display = ['id', 'service', 'desc', 'price']
+    list_display = ['id', 'service', 'desc', 'price', 'discount']
     search_fields = ['id', 'service']
     inlines = [ServiceMaterialInline]
 

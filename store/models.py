@@ -132,6 +132,7 @@ class Service(models.Model):
     desc = models.TextField()
     image = models.ImageField(upload_to='images/service', default='images/service/default.jpg')
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    discount = models.DecimalField(max_digits=4, decimal_places=2, validators=[MaxValueValidator(100), MinValueValidator(0)])
 
     def __str__(self):
         return '{}'.format(self.service)

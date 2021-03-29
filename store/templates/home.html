@@ -1,0 +1,312 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block owl_dependancies %}
+    <!-- owlcarousel -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css"
+          integrity="sha512-tS3S5qG0BlhnQROyJXvNjeEM4UpMXHrQfTGmbQ1gKmelCxlSEBUaxhRBj/EFTzpbP4RVSrpEikbmdJobCvhE3g=="
+          crossorigin="anonymous"/>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css"
+          integrity="sha512-sMXtMNL1zRzolHYKEujM2AqCLUR9F2C4/05cdbxjjLSRvMQIciEPCQZo++nk7go3BtSuK9kfa/s+a4f4i5pLkw=="
+          crossorigin="anonymous"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+            integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"
+            integrity="sha512-bPs7Ae6pVvhOSiIcyUClR7/q2OAsRiovw4vAkX+zJbw3ShAeeqezq50RIIcIURq7Oa20rW2n2q+fyXBNcU9lrw=="
+            crossorigin="anonymous"></script>
+    <script src="owlcarousel/owl.carousel.min.js"></script>
+{% endblock %}
+
+{% block content %}
+
+    <header>
+        <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+            <ol class="carousel-indicators">
+                <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+                <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+                <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+            </ol>
+            <div class="carousel-inner" style="background-image: url('{% static 'images/slider/slider_1.jpg' %}');">
+                <div class="carousel-item active">
+                    <!-- slider 1 image -->
+                    <div class="bg-image">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-6 align-self-center p-5">
+                                    <h2 class="animate__animated animate__fadeInLeft">LATEST PRINTS</h2>
+                                    <h1 style="font-size: 60px"
+                                        class="animate__animated animate__fadeInDown animate__delay-1s">FULL COLOUR
+                                        PRINTS</h1>
+                                    <h4 class="animate__animated animate__fadeInLeft">Up to 30% OFF signs & posters</h4>
+                                    <button class="btn btn-primary animate__animated animate__fadeIn animate__delay-2s">
+                                        Shop
+                                        Now
+                                    </button>
+                                </div>
+                                <div class="col-md d-none d-md-block">
+                                    <img src="{% static 'images/slider/slider_1_avatar.png' %}"
+                                         class="img-fluid animate__animated animate__fadeIn animate__slower">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <!-- slider 2 image -->
+                    <div class="bg-image">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md d-none d-md-block">
+                                    <img src="{% static 'images/slider/slider_2_avatar.png' %}"
+                                         class="img-fluid animate__animated animate__fadeIn animate__delay-1s">
+                                </div>
+                                <div class="col-md-6 align-self-center p-5">
+                                    <h2 class="animate__animated animate__fadeInRight">LATEST PRINTS</h2>
+                                    <h1 style="font-size: 60px"
+                                        class="animate__animated animate__fadeInUp animate__delay-1s">PHOTO BUSINESS
+                                        CARDS</h1>
+                                    <h4 class="animate__animated animate__fadeInLeft">Up to 30% OFF signs & posters</h4>
+                                    <button class="btn btn-primary animate__animated animate__fadeIn animate__delay-2s">
+                                        Shop
+                                        Now
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+
+            <!-- badges -->
+            <div class="badges-container pt-5">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-3 text-center">
+                            <div class="iconbox-icon">
+                                <i class="fa fa-check-square-o fa-4x align-middle" aria-hidden="true"></i>
+                            </div>
+                            <div class="iconbox-desc text-center p-4">
+                                <h5>Quality Printing</h5>
+                                <hr>
+                                <p>
+                                    Bright inks. Thick Paper. Precise cuts. We believe that quality printing serious
+                                    matters.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="iconbox-icon">
+                                <i class="fa fa-calendar-check-o fa-4x" aria-hidden="true"></i>
+                            </div>
+                            <div class="iconbox-desc text-center p-4">
+                                <h5>Quality Printing</h5>
+                                <hr>
+                                <p>
+                                    Bright inks. Thick Paper. Precise cuts. We believe that quality printing serious
+                                    matters.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="iconbox-icon">
+                                <i class="fa fa-pagelines fa-4x" aria-hidden="true"></i>
+                            </div>
+                            <div class="iconbox-desc text-center p-4">
+                                <h5>Quality Printing</h5>
+                                <hr>
+                                <p>
+                                    Bright inks. Thick Paper. Precise cuts. We believe that quality printing serious
+                                    matters.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="iconbox-icon">
+                                <i class="fa fa-phone fa-4x" aria-hidden="true"></i>
+                            </div>
+                            <div class="iconbox-desc text-center p-4">
+                                <h5>Quality Printing</h5>
+                                <hr>
+                                <p>
+                                    Bright inks. Thick Paper. Precise cuts. We believe that quality printing serious
+                                    matters.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </header>
+
+    <!-- owl carousel -->
+    <div class="container text-center p-5">
+        <h3>PROMOTIONS PRODUCTS</h3>
+        <div class="surrounded text-center border self-align-center">
+            <i class="fa fa-star fa-2x" aria-hidden="true"></i>
+        </div>
+    </div>
+    <div class="owl-carousel owl-theme container">
+        <!-- item  -->
+        {% for service in discount_services %}
+            <div class="item">
+                <div class="product-gal">
+                    <div class="card mb-3 box-shadow">
+                        <a href="#">
+                            <img src="{{ service.image.url }}" class="card-img-top" width="50">
+                        </a>
+                    </div>
+                    <div class="card-body text-center p-0">
+                        <div class="card-body text-center p-0">
+                            <h5 class="product-title mb-0">
+                                {{ service.service }}
+                            </h5>
+
+                            <span class="star-rating">
+                        <!-- Star rating -->
+                            <i class="fa fa-star" aria-hidden="true"></i>
+                            <i class="fa fa-star" aria-hidden="true"></i>
+                            <i class="fa fa-star" aria-hidden="true"></i>
+                            <i class="fa fa-star-o" aria-hidden="true"></i>
+                            <i class="fa fa-star-o" aria-hidden="true"></i>
+                      </span>
+
+                            <div class="d-flex justify-content-center">
+                                <div class="pricing">
+                                    <p>
+                                      <span>
+                                          <del>
+                                            $150.00
+                                          </del>
+                                      </span>
+                                        <span class="price-actual">$112.50</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+    </div>
+    <!-- our capabilities -->
+    <div class="capabilities">
+        <div class="container p-5">
+            <section class="row">
+                <div class="col-md-3 text-center .high-quality">
+                    <svg class="radial-progress" data-percentage="98" viewBox="0 0 80 80">
+                        <circle class="incomplete" cx="40" cy="40" r="35"></circle>
+                        <circle class="complete" cx="40" cy="40" r="35"
+                                style="stroke-dashoffset: 39.58406743523136;"></circle>
+                        <text class="percentage" x="50%" y="57%" transform="matrix(0, 1, -1, 0, 80, 0)">
+                            98%
+                        </text>
+                    </svg>
+                    <h6>HIGH QUALITY</h6>
+                    <p>Quality is never an accident, Quality is the best business plan</p>
+                </div>
+                <div class="col-md-3 text-center">
+                    <svg class="radial-progress" data-percentage="90" viewBox="0 0 80 80">
+                        <circle class="incomplete" cx="40" cy="40" r="35"></circle>
+                        <circle class="complete" cx="40" cy="40" r="35"
+                                style="stroke-dashoffset: 147.3406954533613;"></circle>
+                        <text class="percentage" x="50%" y="57%" transform="matrix(0, 1, -1, 0, 80, 0)">
+                            90%
+                        </text>
+                    </svg>
+                    <h6>ON TIME</h6>
+                    <p>Time is more valuable than money, It's not enough to be busy, so are we</p>
+                </div>
+                <div class="col-md-3 text-center">
+                    <svg class="radial-progress" data-percentage="100" viewBox="0 0 80 80">
+                        <circle class="incomplete" cx="40" cy="40" r="35"></circle>
+                        <circle class="complete" cx="40" cy="40" r="35"
+                                style="stroke-dashoffset: 63.774330867872806;"></circle>
+                        <text class="percentage" x="50%" y="57%" transform="matrix(0, 1, -1, 0, 80, 0)">
+                            100%
+                        </text>
+                    </svg>
+                    <h6>TRUE COLOUR</h6>
+                    <p>Life is like a box of crayons, but we prefer living colours</p>
+                </div>
+                <div class="col-md-3 text-center">
+                    <svg class="radial-progress" data-percentage="80" viewBox="0 0 80 80">
+                        <circle class="incomplete" cx="40" cy="40" r="35"></circle>
+                        <circle class="complete" cx="40" cy="40" r="35" style="stroke-dashoffset: 0;"></circle>
+                        <text class="percentage" x="50%" y="57%" transform="matrix(0, 1, -1, 0, 80, 0)">
+                            80%
+                        </text>
+                    </svg>
+                    <h6>FAST DELIVERY</h6>
+                    <p>Light is fast, but we are faster</p>
+                </div>
+            </section>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block home_scripts %}
+
+<script>
+
+    $('.owl-carousel').owlCarousel({
+        loop: true,
+        margin: 10,
+        nav: false,
+        responsive: {
+            0: {
+                items: 1
+            },
+            600: {
+                items: 3
+            },
+            1000: {
+                items: 5
+            }
+        }
+    })
+
+    $(function () {
+
+        // Remove svg.radial-progress .complete inline styling
+        $('svg.radial-progress').each(function (index, value) {
+            $(this).find($('circle.complete')).removeAttr('style');
+        });
+
+        // Activate progress animation on scroll
+        $(window).scroll(function () {
+            $('svg.radial-progress').each(function (index, value) {
+                // If svg.radial-progress is approximately 25% vertically into the window when scrolling from the top or the bottom
+                if (
+                    $(window).scrollTop() > $(this).offset().top - ($(window).height() * 0.75) &&
+                    $(window).scrollTop() < $(this).offset().top + $(this).height() - ($(window).height() * 0.25)
+                ) {
+                    // Get percentage of progress
+                    percent = $(value).data('percentage');
+                    // Get radius of the svg's circle.complete
+                    radius = $(this).find($('circle.complete')).attr('r');
+                    // Get circumference (2πr)
+                    circumference = 2 * Math.PI * radius;
+                    // Get stroke-dashoffset value based on the percentage of the circumference
+                    strokeDashOffset = circumference - ((percent * circumference) / 100);
+                    // Transition progress for 1.25 seconds
+                    $(this).find($('circle.complete')).animate({'stroke-dashoffset': strokeDashOffset}, 1250);
+                }
+            });
+        }).trigger('scroll');
+
+    });
+
+</script>
+{% endblock %}
