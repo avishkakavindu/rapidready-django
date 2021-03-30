@@ -1,0 +1,6 @@
+Hi {{ username }},
+{{ email_body }}
+{{ link }}
+{{ email_reason }}
+Thanks for using our site!
+The {{ site_name }} team

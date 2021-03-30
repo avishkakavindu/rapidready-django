@@ -63,7 +63,20 @@ nav a {
     color: rgba(255,255,255,.75);
 }
 
+.profile-link {
+    color: #fff;
+    text-decoration: none;
+    padding: 20px 20px 5px 0px;
+}
 
+.profile-link:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+#lout {
+    margin: 20px 20px 5px 0px;
+}
 
 .dropdown-submenu {
     position: relative;

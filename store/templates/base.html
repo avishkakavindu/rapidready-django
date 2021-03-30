@@ -51,7 +51,7 @@
         <div class="collapse navbar-collapse " id="navbarTogglerDemo01">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="index.html">
+                    <a class="nav-link active" aria-current="page" href="{% url 'home' %}">
                         <i class="fa fa-home"></i>
                         Home
                     </a>
@@ -107,7 +107,14 @@
                 <i class="fa fa-shopping-cart mt-3"></i>
                 <span class="badge rounded-pill bg-light text-dark">3</span>
             </a>
-            <button type="button" class="btn btn-outline-light signin mt-2">sign in</button>
+            {% if user.is_authenticated %}
+                <a href="#" class="profile-link" id="uname">
+                    <span>Hello, </span> <span class="username"> {{ user.first_name|capfirst }}</span>
+                </a>
+                <a href="{%  url 'logout' %}" class="btn btn-danger" type="button" id="lout">logout</a>
+            {% else %}
+                <a href="{% url 'login' %}" type="button" class="btn btn-outline-light signin mt-2">sign in</a>
+            {% endif %}
         </div>
     </div>
 </nav>

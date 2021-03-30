@@ -30,10 +30,10 @@
                                 <div class="form-group mb-3">
                                     <label class="mb-2" for="password">{{ form.password.label }}
                                     </label>
-                                    <a href="forgot_password.html" class="forgot-password float-right">
+                                    {% render_field form.password class="form-control" placeholder=form.password.label %}
+                                    <a href="{% url 'password_reset' %}" class="forgot-password mt-2 mb-2 float-right">
                                         Forgot Password?
                                     </a>
-                                    {% render_field form.password class="form-control" placeholder=form.password.label %}
                                     <div class="invalid-feedback">
                                         {% for error in form.password.errors %}dsds
                                             <span class="help-block">{{ error }}</span>

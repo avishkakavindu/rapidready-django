@@ -24,6 +24,7 @@ admin.site.index_title = "RapidReady administration"
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('store.urls')),
+
     path('', include('django.contrib.auth.urls')),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
