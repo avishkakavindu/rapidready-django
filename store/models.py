@@ -8,52 +8,39 @@ from django.utils.html import format_html
 class User(AbstractUser):
     """ User model """
 
-    # user roles
-    CUSTOMER = 1
-    SUPPLIER = 2
-    PRODUCTION_MANAGER = 3
-    PRODUCTION_TEAM = 4
-    STORE_MANAGER = 5
-    STORE_TEAM = 6
-
-    ROLE_CHOICES = [
-        (CUSTOMER, 'Customer'),
-        (SUPPLIER, 'Supplier'),
-        (PRODUCTION_MANAGER, 'Production Manager'),
-        (PRODUCTION_TEAM, 'Production Team'),
-        (STORE_MANAGER, 'Store Manager'),
-        (STORE_TEAM, 'Store Team'),
-
-    ]
-
-    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, null=True, blank=True)
     nic = models.CharField(max_length=10)
     address = models.TextField()
     telephone = models.CharField(max_length=12)
     profile_pic = models.ImageField(upload_to='images/user', default="images/user/default.jpg")
 
     def role_status(self):
-        if self.role == 1:
-            return 'Customer'
-        if self.role == 2:
+        if self.groups.filter(name='supplier').exists():
             return format_html(
-                '<span style=""><i class="fa fa-truck mr" aria-hidden="true"></i></span>{}'.format(
-                    self.get_role_display())
+                '<span style=""><i class="fa fa-truck mr" aria-hidden="true"></i></span>Supplier'
             )
-        elif self.role == 3 or self.role == 5:
+        elif self.groups.filter(name='production manager').exists():
             return format_html(
-                '<span style=""><i class="fa fa-user-circle-o mr" aria-hidden="true"></i></span>{}'.format(
-                    self.get_role_display())
+                '<span style=""><i class="fa fa-user-circle-o mr" aria-hidden="true"></i></span>Production Manager'
             )
-        elif self.role == 4 or self.role == 6:
+        elif self.groups.filter(name='store manager').exists():
             return format_html(
-                '<span style=""><i class="fa fa-user-o mr" aria-hidden="true"></i></span>{}'.format(
-                    self.get_role_display())
+                '<span style=""><i class="fa fa-user-circle-o mr" aria-hidden="true"></i></span>Store Manager'
+            )
+        elif self.groups.filter(name='production team').exists():
+            return format_html(
+                '<span style=""><i class="fa fa-user-o mr" aria-hidden="true"></i></span>Production Teams'
+            )
+        elif self.groups.filter(name='store team').exists():
+            return format_html(
+                '<span style=""><i class="fa fa-user-o mr" aria-hidden="true"></i></span>Store Teams'
             )
         else:
-            return format_html(
-                '<span style=""><i class="fa fa-universal-access mr" aria-hidden="true"></i></span>{}'.format('Admin')
-            )
+            if self.is_superuser:
+                return format_html(
+                    '<span style=""><i class="fa fa-universal-access mr" aria-hidden="true"></i></span>{}'.format(
+                        'Admin')
+                )
+            return 'Customer'
 
 
 class Order(models.Model):
@@ -145,6 +132,7 @@ class Service(models.Model):
     desc = models.TextField()
     image = models.ImageField(upload_to='images/service', default='images/service/default.jpg')
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    discount = models.DecimalField(max_digits=4, decimal_places=2, validators=[MaxValueValidator(100), MinValueValidator(0)])
 
     def __str__(self):
         return '{}'.format(self.service)
