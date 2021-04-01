@@ -20,3 +20,12 @@ class SignUpView(CreateView):
     form_class = SignUpForm
     success_url = reverse_lazy('login')
     template_name = 'registration/register.html'
+
+    def form_valid(self, form):
+        print(form.cleaned_data)
+        form.instance = self.request.POST
+        return super().form_valid(form)
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        return email
