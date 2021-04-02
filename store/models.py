@@ -7,7 +7,7 @@ from django.utils.html import format_html
 
 class User(AbstractUser):
     """ User model """
-
+    email = models.EmailField(unique=True)
     nic = models.CharField(max_length=10)
     address = models.TextField()
     telephone = models.CharField(max_length=12)
