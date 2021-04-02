@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+    <div style="background: url('{% static 'images/main_back.jpg' %}'); background-size: auto;">
+        <div class="container">
+            <div class="row justify-content-md-center">
+                <div class="container justify-content-center">
+                    <div class="login col-lg-5 rounded border mb-5 mt-5"
+                         style="background: url('{% static 'images/auth/login_back.png' %}')">
+                        <div class="text-center">
+                            <img class="rounded-circle border mt-5 mb-3" src="{% static 'images/auth/login_logo.jpg' %}"
+                                 alt="" width="72"
+                                 height="72">
+                        </div>
+                        <div class="login-inner border p-3 rounded">
+                            <form class="form-signup" method="post" novalidate>
+                                {% csrf_token %}
+                                <h1 class="h3 mb-3 font-weight-normal">Sign Up</h1>
+                                <div class="row">
+                                    <div class="form-group col-md-6 mb-3">
+                                        <label class="mb-2"
+                                               for="{{ form.first_name.auto_id }}">{{ form.first_name.label }}</label>
+                                        {% if form.first_name.errors %}
+                                            {% render_field form.first_name class="form-control is-invalid" placeholder=form.first_name.label %}
+                                        {% else %}
+                                            {% render_field form.first_name class="form-control" placeholder=form.first_name.label %}
+                                        {% endif %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.first_name.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-6 mb-3">
+                                        <label class="mb-2"
+                                               for="{{ form.last_name.auto_id }}">{{ form.last_name.label }}</label>
+                                        {% if form.last_name.errors %}
+                                            {% render_field form.last_name class="form-control is-invalid" placeholder=form.last_name.label %}
+                                        {% else %}
+                                            {% render_field form.last_name class="form-control" placeholder=form.last_name.label %}
+                                        {% endif %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.last_name.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label class="mb-2" for="{{ form.email.auto_id }}">{{ form.email.label }}</label>
+                                    {% if form.email.errors %}
+                                        {% render_field form.email class="form-control is-invalid" placeholder=form.email.label %}
+                                    {% else %}
+                                        {% render_field form.email class="form-control" placeholder=form.email.label %}
+                                    {% endif %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.email.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label class="mb-2"
+                                           for="{{ form.username.auto_id }}">{{ form.username.label }}</label>
+                                    {% if form.username.errors %}
+                                        {% render_field form.username class="form-control is-invalid" placeholder=form.username.label %}
+                                    {% else %}
+                                        {% render_field form.username class="form-control" placeholder=form.username.label %}
+                                    {% endif %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.username.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label class="mb-2" for="{{ form.password1.auto_id }}">{{ form.password1.label }}
+                                    </label>
+                                    {% if form.password1.errors %}
+                                        {% render_field form.password1 class="form-control is-invalid" placeholder=form.password1.label %}
+                                    {% else %}
+                                        {% render_field form.password1 class="form-control" placeholder=form.password1.label %}
+                                    {% endif %}
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label class="mb-2" for="{{ form.password2.auto_id }}">{{ form.password2.label }}
+                                    </label>
+                                    {% if form.password2.errors %}
+                                        {% render_field form.password2 class="form-control is-invalid" placeholder=form.password2.label %}
+                                    {% else %}
+                                        {% render_field form.password2 class="form-control" placeholder=form.password2.label %}
+                                    {% endif %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.password2.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+
+                                <div class="form-group mt-2">
+                                    <button type="submit" class="btn btn-primary btn-lg btn-block col-12">
+                                        SignUp
+                                    </button>
+                                </div>
+                                <div class="mt-4 text-center">
+                                    Already have an account? <a href="login.html">Sign In</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

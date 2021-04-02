@@ -1,17 +1,18 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path
 
-from store.views import HomeView
+from store.views import HomeView, SignUpView, UserActivationView
 
 urlpatterns = [
     path('', HomeView.as_view(), name='home'),
     path('login', auth_views.LoginView.as_view(redirect_authenticated_user=True), name='login'),
+    path('register', SignUpView.as_view(), name='register'),
+    path('activate/<str:uidb64>/<str:token>', UserActivationView.as_view(), name='user_activation'),
 
-    # password reset paths
     path(
         'password_reset',
         auth_views.PasswordResetView.as_view(template_name='registration/password_reset_form.html',
-                                             html_email_template_name="registration/password_reset_email.html",
+                                             html_email_template_name='registration/html_password_reset_email.html',
                                              email_template_name='registration/password_reset_email.html',
                                              ),
         name='password_reset'
