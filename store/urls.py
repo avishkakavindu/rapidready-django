@@ -10,15 +10,15 @@ urlpatterns = [
     path('activate/<str:uidb64>/<str:token>', UserActivationView.as_view(), name='user_activation'),
 
     path(
-        'password_reset',
+        'password_reset/',
         auth_views.PasswordResetView.as_view(template_name='registration/password_reset_form.html',
-                                             html_email_template_name='registration/html_password_reset_email.html',
+                                             html_email_template_name='registration/password_reset_email.html',
                                              email_template_name='registration/password_reset_email.html',
                                              ),
         name='password_reset'
     ),  # allows a user to reset their password by generating a one-time use link
     path(
-        'password_reset_done',
+        'password_reset_done/',
         auth_views.PasswordResetDoneView.as_view(),
         name='password_reset_done'
     ),  # after password reset email sent
@@ -28,7 +28,7 @@ urlpatterns = [
         name='password_reset_confirm'
     ),  # present a form to enter new password
     path(
-        'password_reset_complete',
+        'password_reset_complete/',
         auth_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_complete.html'),
         name='password_reset_complete'
     ),  # inform success
