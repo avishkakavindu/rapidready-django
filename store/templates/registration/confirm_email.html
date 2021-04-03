@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+    <div style="background: url('{% static 'images/main_back.jpg' %}'); background-size: auto;">
+        <div class="container">
+            <div class="row justify-content-md-center">
+                <div class="container justify-content-center">
+                    <div class="login col-lg-5 rounded border mb-5 mt-5"
+                         style="background: url('{% static 'images/auth/login_back.png' %}'); margin-bottom: 100px;">
+                        <div class="text-center">
+                            <img class="rounded-circle border mt-5 mb-3" src="{% static 'images/auth/login_logo.jpg' %}"
+                                 alt="" width="72"
+                                 height="72">
+                        </div>
+                        <div class="login-inner border p-3 mb-5 mt-5 rounded">
+                            <h2 class="h3 mb-3 font-weight-normal">
+                                <i class="fa fa-envelope-o mr-5" aria-hidden="true"></i>
+                                Please confirm your email address
+                            </h2>
+                            <p>
+                                <small>
+                                    We now need to verify your email address. We've sent an email to
+                                    <strong>{{ email }}</strong> to verify your address.
+                                </small>
+                            </p>
+                            <p>
+                                <small>If you don’t receive an email, please make sure you’ve entered the correct email
+                                    address, and check your spam folder.
+                                </small>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

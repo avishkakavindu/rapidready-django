@@ -38,7 +38,7 @@ class UserAdmin(UserAdmin):
         ('Important dates', {'fields': ('last_login', 'date_joined')})
     ]
 
-    list_display = ['id', 'username', 'first_name', 'last_name', 'nic', 'telephone', 'role_status']
+    list_display = ['id', 'username', 'first_name', 'last_name', 'nic', 'telephone', 'role_status', 'is_active']
     search_fields = ['id', 'username', 'fist_name', 'last_name', 'nic']
     inlines = []
 
