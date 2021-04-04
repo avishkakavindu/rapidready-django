@@ -63,28 +63,19 @@
                         Services
                     </a>
                     <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
-                        <li class="dropdown-submenu">
-                            <a class="dropdown-item" tabindex="-1" href="#">Service Category #1</a>
+                        {% for category in categories %}
+                            <li class="dropdown-submenu">
+                            <a class="dropdown-item" tabindex="21" href="#">
+                                {{ category.category }}
+                            </a>
                             <ul class="dropdown-menu">
                                 <li class="dropdown-item"><a tabindex="-1" href="#">Second level</a></li>
-                                <li class="dropdown-submenu">
-                                    <a class="dropdown-item" href="#">Even More..</a>
-                                    <ul class="dropdown-menu">
-                                        <li class="dropdown-item"><a href="#">3rd level</a></li>
-                                        <li class="dropdown-submenu"><a class="dropdown-item" href="#">another level</a>
-                                            <ul class="dropdown-menu">
-                                                <li class="dropdown-item"><a href="#">4th level</a></li>
-                                                <li class="dropdown-item"><a href="#">4th level</a></li>
-                                                <li class="dropdown-item"><a href="#">4th level</a></li>
-                                            </ul>
-                                        </li>
-                                        <li class="dropdown-item"><a href="#">3rd level</a></li>
-                                    </ul>
-                                </li>
+                                <li class="dropdown-item"><a href="#">Second level</a></li>
                                 <li class="dropdown-item"><a href="#">Second level</a></li>
                                 <li class="dropdown-item"><a href="#">Second level</a></li>
                             </ul>
                         </li>
+                        {% endfor %}
                     </ul>
 
                 </li>
@@ -111,7 +102,7 @@
                 <a href="#" class="profile-link" id="uname">
                     <span>Hello, </span> <span class="username"> {{ user.first_name|capfirst }}</span>
                 </a>
-                <a href="{%  url 'logout' %}" class="btn btn-danger" type="button" id="lout">logout</a>
+                <a href="{% url 'logout' %}" class="btn btn-danger" type="button" id="lout">logout</a>
             {% else %}
                 <a href="{% url 'login' %}" type="button" class="btn btn-outline-light signin mt-2">sign in</a>
             {% endif %}
