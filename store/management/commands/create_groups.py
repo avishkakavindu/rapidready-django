@@ -9,6 +9,7 @@ GROUPS = {
         "ordered service": ['add', 'change', 'delete', 'view'],
         "service material": ['add', 'change', 'delete', 'view'],
         "service": ['add', 'change', 'delete', 'view'],
+        "category": ['add', 'change', 'delete', 'view'],
     },
     'production team': {
         "order": ['change','view'],

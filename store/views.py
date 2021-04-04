@@ -1,4 +1,5 @@
 from django.contrib.auth import login
+from django.db.models import Prefetch
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, View
@@ -9,10 +10,11 @@ from django.urls import reverse
 from store.util import Util, token_generator
 from django.contrib.auth.models import User
 from django.contrib import messages
-from store.models import Service
+from store.models import Service, Category
 from store.forms import SignUpForm
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+
 
 User = get_user_model()
 
@@ -25,6 +27,13 @@ class HomeView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['discount_services'] = Service.objects.exclude(discount='0')
+        context['categories'] = Category.objects.prefetch_related(
+            Prefetch(
+                'service_set',
+                Service.objects.all(),
+                to_attr='services'
+            )
+        )
 
         return context
 

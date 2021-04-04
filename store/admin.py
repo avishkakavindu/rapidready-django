@@ -88,6 +88,23 @@ class OrderAdmin(admin.ModelAdmin):
         return super(OrderAdmin, self).get_readonly_fields(request, obj=obj)
 
 
+class ServiceCategoryInline(admin.StackedInline):
+    """ Inline views of Services belongs to the category """
+    model = Service
+    extra = 1
+
+    def has_change_permission(self, request, obj=None):
+        """ read only """
+        return False
+
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    """ Service categories  """
+    list_display = ['id', 'category']
+    inlines = [ServiceCategoryInline]
+
+
 class ServiceMaterialInline(admin.StackedInline):
     """ Inline views of services and its materials"""
     model = ServiceMaterial
@@ -96,8 +113,8 @@ class ServiceMaterialInline(admin.StackedInline):
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
     """ Services admin - available services """
-    list_display = ['id', 'service', 'desc', 'price', 'discount']
-    search_fields = ['id', 'service']
+    list_display = ['id', 'service', 'desc', 'price', 'discount', 'category']
+    search_fields = ['id', 'service', 'category']
     inlines = [ServiceMaterialInline]
 
 

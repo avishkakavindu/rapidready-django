@@ -125,14 +125,25 @@ class Order(models.Model):
             )
 
 
+class Category(models.Model):
+    """ Service category model """
+
+    category = models.CharField(max_length=255)
+
+    def __str__(self):
+        return '{}'.format(self.category)
+
+
 class Service(models.Model):
     """ RapidReady services model """
 
     service = models.CharField(max_length=255)
     desc = models.TextField()
     image = models.ImageField(upload_to='images/service', default='images/service/default.jpg')
+    category = models.ForeignKey(Category, null=False, on_delete=models.DO_NOTHING)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    discount = models.DecimalField(max_digits=4, decimal_places=2, validators=[MaxValueValidator(100), MinValueValidator(0)])
+    discount = models.DecimalField(max_digits=4, decimal_places=2,
+                                   validators=[MaxValueValidator(100), MinValueValidator(0)])
 
     def __str__(self):
         return '{}'.format(self.service)
@@ -193,7 +204,10 @@ class ServiceMaterial(models.Model):
 
     service = models.ForeignKey(Service, null=True, on_delete=models.CASCADE)
     material = models.ForeignKey(Material, null=False, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField()
+    quantity = models.DecimalField(max_digits=5, decimal_places=2,
+                                   validators=[MinValueValidator(0), MaxValueValidator(999)],
+                                   help_text='Material needed for one unit. Ex: 1 business card 1/20 of 14pt business '
+                                             'card stock paper')
 
     def __str__(self):
         return '{}'.format(self.material)
@@ -213,4 +227,4 @@ class Review(models.Model):
     )
 
     def __str__(self):
-        return'{}-{}-{}'.format(self.user, self.review, self.service)
+        return '{}-{}-{}'.format(self.user, self.review, self.service)
