@@ -69,10 +69,11 @@
                                 {{ category.category }}
                             </a>
                             <ul class="dropdown-menu">
-                                <li class="dropdown-item"><a tabindex="-1" href="#">Second level</a></li>
-                                <li class="dropdown-item"><a href="#">Second level</a></li>
-                                <li class="dropdown-item"><a href="#">Second level</a></li>
-                                <li class="dropdown-item"><a href="#">Second level</a></li>
+                                {% for service in category.services %}
+                                    <li class="dropdown-item">
+                                        <a href="#">{{ service.service }}</a>
+                                    </li>
+                                {% endfor %}
                             </ul>
                         </li>
                         {% endfor %}
