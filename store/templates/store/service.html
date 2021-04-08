@@ -20,12 +20,7 @@
                     <h1>{{ object.service }}</h1>
                     <!-- Star rating -->
                     <span class="star-rating" data-rating="{{ object.average_rating }}">
-                        <i class="fa fa-star" aria-hidden="true"></i>
-                        <i class="fa fa-star" aria-hidden="true"></i>
-                        <i class="fa fa-star" aria-hidden="true"></i>
-                        <i class="fa fa-star-half-o" aria-hidden="true"></i>
-                        <i class="fa fa-star-o" aria-hidden="true"></i>
-
+                        <p>{{ object.average_rating }}</p>
                     </span>
                     <small> {{ object.rating_count }} reviews</small>
                     <hr>
@@ -62,15 +57,11 @@
                         <div class="row  graphical-avg">
                             <div class="col-md col-lg-5 self-align-right">
                                 <h5> Average user rating</h5>
-                                <h4>3.0<span>/5</span></h4>
+                                <h4>{{ object.average_rating }}<span>/5</span></h4>
 
                                 <!-- Star rating -->
-                                <span class="star-rating">
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star" aria-hidden="true"></i>
-                                    <i class="fa fa-star-half-o" aria-hidden="true"></i>
-                                    <i class="fa fa-star-o" aria-hidden="true"></i>
-                                    <i class="fa fa-star-o" aria-hidden="true"></i>
+                                <span class="star-rating" data-rating="{{ object.average_rating }}">
+                                    <p>{{ object.average_rating }}</p>
                                 </span>
                             </div>
                             <!-- Rating Breakdown -->
@@ -192,30 +183,30 @@
                                 <div class="tab-pane active fade show  mt-2" id="nav-home" role="tabpanel"
                                      aria-labelledby="nav-home-tab">
                                     <!-- Review -->
-                                    <div class="row mt-3 mb-3 border-bottom pb-3 reviews">
-                                        <div class="col-md col-lg-3 text-center">
-                                            <img src="img/user/root.jpg"
-                                                 class="img-thumbnail rounded-circle review-pic">
-                                            <p class="review-username">
-                                                Test User
-                                            </p>
+                                    {% for review in reviews %}
+                                        <div class="row mt-3 mb-3 border-bottom pb-3 reviews">
+                                            <div class="col-md col-lg-3 text-center">
+                                                <img src="{{ review.user.profile_pic.url }}"
+                                                     class="img-thumbnail rounded-circle review-pic">
+                                                <p class="review-username">
+                                                    {{ review.user }}
+                                                </p>
+                                            </div>
+
+                                            <div class="col-md col-lg">
+                                                <p class="review-desc">
+                                                    {{ review.review|default:"None" }}
+                                                </p>
+                                                <!-- Star rating -->
+                                                <span class="star-rating rev-rating" data-rating="{{ review.rating }}">
+                                                    <p>{{ review.rating }}</p>
+
+                                                </span>
+                                                <span class="review-date">Feb. 11, 2021, 2:15 p.m </span>
+                                            </div>
                                         </div>
-                                        <div class="col-md col-lg">
-                                            <p class="review-desc">
-                                                Nullam efficitur fringilla finibus. Cras eleifend non ex id sagittis.
-                                            </p>
-                                            <!-- Star rating -->
-                                            <span class="star-rating rev-rating">
-                                                <i class="fa fa-star" aria-hidden="true"></i>
-                                                <i class="fa fa-star" aria-hidden="true"></i>
-                                                <i class="fa fa-star" aria-hidden="true"></i>
-                                                <i class="fa fa-star" aria-hidden="true"></i>
-                                                <i class="fa fa-star-o" aria-hidden="true"></i>
-                                            </span>
-                                            <span class="review-date">Feb. 11, 2021, 2:15 p.m </span>
-                                        </div>
-                                    </div>
-                                    <!-- End of review -->
+                                        <!-- End of review -->
+                                    {% endfor %}
                                 </div>
                                 <div class="tab-pane border-bottom mt-2" id="nav-profile" role="tabpanel"
                                      aria-labelledby="nav-profile-tab">

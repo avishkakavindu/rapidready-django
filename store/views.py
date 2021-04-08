@@ -10,7 +10,7 @@ from django.urls import reverse
 from store.util import Util, token_generator
 from django.contrib.auth.models import User
 from django.contrib import messages
-from store.models import Service, Category
+from store.models import Service, Category, Review
 from store.forms import SignUpForm, AddToCartForm
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -137,5 +137,9 @@ class ServiceView(DetailView):
     model = Service
     template_name = 'store/service.html'
 
+    def get_context_data(self, **kwargs):
+        context = super(ServiceView, self).get_context_data()
+        context['reviews'] = Review.objects.filter(service=self.kwargs['pk'])
+        return context
 
 

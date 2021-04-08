@@ -156,6 +156,8 @@ class Service(models.Model):
     @property
     def average_rating(self):
         """ Get average rating for service """
+        if self.rating_count == 0:
+            return '0'
         return '{:.1f}'.format(sum([_.rating for _ in self.review_set.all()]) / self.rating_count)
 
     @property
