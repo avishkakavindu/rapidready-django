@@ -148,6 +148,23 @@ class Service(models.Model):
     def __str__(self):
         return '{}'.format(self.service)
 
+    @property
+    def actual_price(self):
+        """ Get sale price """
+        return self.price + self.price * (self.discount / 100)
+
+    @property
+    def average_rating(self):
+        """ Get average rating for service """
+        if self.rating_count == 0:
+            return '0'
+        return '{:.1f}'.format(sum([_.rating for _ in self.review_set.all()]) / self.rating_count)
+
+    @property
+    def rating_count(self):
+        """ Get total count of rating """
+        return len(self.review_set.all())
+
 
 class OrderedService(models.Model):
     """ Ordered services and the quantities model """
@@ -216,7 +233,7 @@ class ServiceMaterial(models.Model):
 class Review(models.Model):
     """ Review model """
 
-    user = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, null=False, on_delete=models.CASCADE, related_name='review_set')
     service = models.ForeignKey(Service, null=False, on_delete=models.CASCADE)
     review = models.TextField(null=True, blank=True)
     rating = models.DecimalField(

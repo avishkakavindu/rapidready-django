@@ -58,7 +58,7 @@ class UserAdmin(UserAdmin):
 class OrderedServiceInline(admin.StackedInline):
     """ Inline views of ordered services """
     model = OrderedService
-    extra = 1
+    extra = 0
 
 
 @admin.register(Order)
@@ -91,7 +91,7 @@ class OrderAdmin(admin.ModelAdmin):
 class ServiceCategoryInline(admin.StackedInline):
     """ Inline views of Services belongs to the category """
     model = Service
-    extra = 1
+    extra = 0
 
     def has_change_permission(self, request, obj=None):
         """ read only """
@@ -108,6 +108,7 @@ class CategoryAdmin(admin.ModelAdmin):
 class ServiceMaterialInline(admin.StackedInline):
     """ Inline views of services and its materials"""
     model = ServiceMaterial
+    extra = 0
 
 
 @admin.register(Service)
@@ -148,7 +149,7 @@ class DepletedStockFilter(admin.SimpleListFilter):
 class MaterialStockInline(admin.StackedInline):
     """ Inline views of Stocks belongs to Materials """
     model = Stock
-    extra = 1
+    extra = 0
     readonly_fields = ['stock', 'supplier', 'material', 'quantity', 'unit_price']
 
 

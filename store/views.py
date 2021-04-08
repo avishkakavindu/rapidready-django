@@ -2,7 +2,7 @@ from django.contrib.auth import login
 from django.db.models import Prefetch
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, CreateView, View
+from django.views.generic import TemplateView, CreateView, View, FormView, DetailView
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -10,8 +10,8 @@ from django.urls import reverse
 from store.util import Util, token_generator
 from django.contrib.auth.models import User
 from django.contrib import messages
-from store.models import Service, Category
-from store.forms import SignUpForm
+from store.models import Service, Category, Review
+from store.forms import SignUpForm, AddToCartForm
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 
@@ -22,7 +22,7 @@ User = get_user_model()
 class HomeView(TemplateView):
     """ Index view """
 
-    template_name = "home.html"
+    template_name = "store/home.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -129,3 +129,17 @@ class UserActivationView(View):
 
         messages.warning(request, ['Invalid confirmation link detected'])
         return redirect('login')
+
+
+class ServiceView(DetailView):
+    """ Service detail view """
+
+    model = Service
+    template_name = 'store/service.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ServiceView, self).get_context_data()
+        context['reviews'] = Review.objects.filter(service=self.kwargs['pk'])
+        return context
+
+

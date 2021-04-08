@@ -1,14 +1,16 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path
 
-from store.views import HomeView, SignUpView, UserActivationView
+from store.views import *
 
 urlpatterns = [
+    # auth
     path('', HomeView.as_view(), name='home'),
     path('login', auth_views.LoginView.as_view(redirect_authenticated_user=True), name='login'),
     path('register', SignUpView.as_view(), name='register'),
     path('activate/<str:uidb64>/<str:token>', UserActivationView.as_view(), name='user_activation'),
-
+    # -------------------
+    # password reset process
     path(
         'password_reset/',
         auth_views.PasswordResetView.as_view(template_name='registration/password_reset_form.html',
@@ -32,5 +34,8 @@ urlpatterns = [
         auth_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_complete.html'),
         name='password_reset_complete'
     ),  # inform success
+    # ---------------------
+
+    path('service/<int:pk>', ServiceView.as_view(), name='service'),
 
 ]
