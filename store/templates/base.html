@@ -65,17 +65,18 @@
                     <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
                         {% for category in categories %}
                             <li class="dropdown-submenu">
-                            <a class="dropdown-item" tabindex="21" href="#">
-                                {{ category.category }}
-                            </a>
-                            <ul class="dropdown-menu">
-                                {% for service in category.services %}
-                                    <li class="dropdown-item">
-                                        <a href="#">{{ service.service }}</a>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </li>
+                                <span class="dropdown-item">
+                                     {{ category.category }}
+                                </span>
+
+                                <ul class="dropdown-menu">
+                                    {% for service in category.services %}
+                                        <li class="dropdown-item">
+                                            <a href="{% url 'service' pk=service.pk %}">{{ service.service }}</a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
                         {% endfor %}
                     </ul>
 

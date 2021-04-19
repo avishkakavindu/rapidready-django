@@ -226,6 +226,6 @@ class ServiceMaterialAdmin(admin.ModelAdmin):
 
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'review', 'rating']
+    list_display = ['id', 'user', 'service', 'review', 'rating']
     search_fields = ['id', 'user']
     list_filter = ['rating']

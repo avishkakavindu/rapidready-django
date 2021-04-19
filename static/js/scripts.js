@@ -20,3 +20,20 @@ $('.star-rating').each(function(){
         }
     }
 });
+
+// star rating system
+$('.rate-me').mouseover(function(){
+
+    $(this).prevAll().addBack().each(function(){
+        $(this).removeClass('fa-star-o')
+        $(this).addClass('fa-star')
+        rating++
+
+    })
+    $(this).nextAll().each(function(){
+        $(this).removeClass('fa-star')
+        $(this).addClass('fa-star-o')
+    })
+    var rating = $('.rate-me.fa-star').length
+    $('#id_rating').val(rating)
+})

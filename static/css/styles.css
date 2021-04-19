@@ -78,6 +78,14 @@ nav a {
     margin: 20px 20px 5px 0px;
 }
 
+.service-category {
+    margin: 10px;
+}
+
+.service-category:hover {
+    text-decoration: underline;
+}
+
 .dropdown-submenu {
     position: relative;
 }
@@ -267,7 +275,11 @@ nav a {
     color: #25bce9;
     font-weight: 600;
     margin-left: 10px;
-    font-size: larger;
+}
+
+.price-actual small {
+    font-size: smaller;
+    padding-left: 5px;
 }
 
 .pricing {

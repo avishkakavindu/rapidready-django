@@ -7,11 +7,13 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.urls import reverse
+from django.views.generic.edit import FormMixin
+from django.http import HttpResponseForbidden, HttpResponseRedirect
 from store.util import Util, token_generator
 from django.contrib.auth.models import User
 from django.contrib import messages
 from store.models import Service, Category, Review
-from store.forms import SignUpForm, AddToCartForm
+from store.forms import SignUpForm, AddToCartForm, ServiceReviewForm
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 
@@ -27,13 +29,6 @@ class HomeView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['discount_services'] = Service.objects.exclude(discount='0')
-        context['categories'] = Category.objects.prefetch_related(
-            Prefetch(
-                'service_set',
-                Service.objects.all(),
-                to_attr='services'
-            )
-        )
 
         return context
 
@@ -131,15 +126,39 @@ class UserActivationView(View):
         return redirect('login')
 
 
-class ServiceView(DetailView):
+class ServiceView(FormMixin, DetailView):
     """ Service detail view """
 
     model = Service
     template_name = 'store/service.html'
+    form_class = ServiceReviewForm
 
     def get_context_data(self, **kwargs):
         context = super(ServiceView, self).get_context_data()
         context['reviews'] = Review.objects.filter(service=self.kwargs['pk'])
         return context
 
+    def form_valid(self, form):
+        """ Handles valid form """
+        form = self.form_class(self.request.POST)
+        review = form.save(commit=False)
+        review.user = self.request.user
+        review.service = Service.objects.get(pk=self.kwargs['pk'])
+        form.save()
+        messages.success(self.request, ['Your review added successfully!'])
+
+        return HttpResponseRedirect(self.request.path_info)
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponseForbidden()
+
+        self.object = self.get_object()
+        form = self.get_form()
+
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+
+            return self.form_invalid(form)
 
