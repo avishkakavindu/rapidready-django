@@ -128,6 +128,9 @@ class Order(models.Model):
 class Category(models.Model):
     """ Service category model """
 
+    class Meta:
+        verbose_name = "Categorie"
+
     category = models.CharField(max_length=255)
 
     def __str__(self):
@@ -151,7 +154,7 @@ class Service(models.Model):
     @property
     def actual_price(self):
         """ Get sale price """
-        return self.price + self.price * (self.discount / 100)
+        return '$ {:.2f}'.format(self.price - self.price * (self.discount / 100))
 
     @property
     def average_rating(self):
