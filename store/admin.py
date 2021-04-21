@@ -229,3 +229,23 @@ class ReviewAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'service', 'review', 'rating']
     search_fields = ['id', 'user']
     list_filter = ['rating']
+
+
+class CartItemInline(admin.StackedInline):
+    """ Inline views of cart items belongs to a cart """
+    model = CartItem
+    extra = 0
+
+
+@admin.register(Cart)
+class CartAdmin(admin.ModelAdmin):
+    list_display = ['id', 'user', 'created_on']
+    search_fields = ['id', 'user', 'created_on']
+    inlines = [CartItemInline]
+
+
+@admin.register(CartItem)
+class CartItemAdmin(admin.ModelAdmin):
+    list_display = ['id', 'cart', 'service', 'quantity', 'discount', 'added_on']
+    search_field = ['id', 'cart', 'service']
+    list_filter = ['service']

@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
 from django.utils.html import format_html
+from datetime import datetime
 
 
 class User(AbstractUser):
@@ -245,6 +246,30 @@ class Review(models.Model):
         default=0,
         validators=[MinValueValidator(0), MaxValueValidator(5)]
     )
+    created_on = models.DateTimeField(default=datetime.now())
 
     def __str__(self):
-        return '{}-{}-{}'.format(self.user, self.review, self.service)
+        return '{} - {} - {}'.format(self.user, self.review, self.service)
+
+
+class Cart(models.Model):
+    """ Cart model """
+
+    user = models.ForeignKey(User, null=False, on_delete=models.DO_NOTHING, related_name="cart_set")
+    created_on = models.DateTimeField(default=datetime.now())
+
+    def __str__(self):
+        return '{} - {}'.format(self.id, self.user)
+
+
+class CartItem(models.Model):
+    """ Cart items model """
+
+    cart = models.ForeignKey(Cart, null=False, on_delete=models.CASCADE, related_name='cartitem_set')
+    service = models.ForeignKey(Service, null=False, on_delete=models.DO_NOTHING, related_name='cartservice_set')
+    quantity = models.DecimalField(max_digits=10, decimal_places=0, validators=[MinValueValidator(1)])
+    discount = models.DecimalField(max_digits=5,
+                                   decimal_places=2,
+                                   validators=[MinValueValidator(0),
+                                               MaxValueValidator(100)])
+    added_on = models.DateTimeField(default=datetime.now())

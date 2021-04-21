@@ -182,8 +182,8 @@
                                 </div>
                             </nav>
                             <div class="tab-content" id="nav-tabContent">
-                                <div class="tab-pane active fade show  mt-2" id="nav-home" role="tabpanel"
-                                     aria-labelledby="nav-home-tab">
+                                <div class="container tab-pane active fade show overflow-auto mt-2" id="nav-home" role="tabpanel"
+                                     aria-labelledby="nav-home-tab" style="height:400px;">
                                     <!-- Review -->
                                     {% for review in reviews %}
                                         <div class="row mt-3 mb-3 border-bottom pb-3 reviews">
@@ -204,7 +204,7 @@
                                                     <p>{{ review.rating }}</p>
 
                                                 </span>
-                                                <span class="review-date">Feb. 11, 2021, 2:15 p.m </span>
+                                                <span class="review-date">{{ review.created_on }} </span>
                                             </div>
                                         </div>
                                         <!-- End of review -->
