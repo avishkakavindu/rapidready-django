@@ -10,6 +10,8 @@ urlpatterns = [
     path('register', SignUpView.as_view(), name='register'),
     path('activate/<str:uidb64>/<str:token>', UserActivationView.as_view(), name='user_activation'),
     # -------------------
+    # profile
+    path('profile/<int:pk>', ProfileView.as_view(), name='profile'),
     # password reset process
     path(
         'password_reset/',

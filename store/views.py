@@ -7,7 +7,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.urls import reverse
-from django.views.generic.edit import FormMixin
+from django.views.generic.edit import FormMixin, UpdateView
 from django.http import HttpResponseForbidden, HttpResponseRedirect
 from store.util import Util, token_generator
 from django.contrib.auth.models import User
@@ -124,6 +124,12 @@ class UserActivationView(View):
 
         messages.warning(request, ['Invalid confirmation link detected'])
         return redirect('login')
+
+
+class ProfileView(UpdateView):
+    model = User
+    template_name = 'registration/profile.html'
+    fields = ['first_name', 'last_name', 'email', 'nic', 'street', 'city', 'state', 'zipcode', 'telephone', 'profile_pic']
 
 
 class ServiceView(FormMixin, DetailView):

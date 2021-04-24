@@ -10,7 +10,10 @@ class User(AbstractUser):
     """ User model """
     email = models.EmailField(unique=True)
     nic = models.CharField(max_length=10)
-    address = models.TextField()
+    street = models.CharField(max_length=50)
+    city = models.CharField(max_length=50)
+    state = models.CharField(max_length=50)
+    zipcode = models.CharField(max_length=10)
     telephone = models.CharField(max_length=12)
     profile_pic = models.ImageField(upload_to='images/user', default="images/user/default.jpg")
 
