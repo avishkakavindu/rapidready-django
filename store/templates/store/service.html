@@ -12,32 +12,32 @@
                 <div class="col-md col-lg-5">
                     <div class="row">
                         <div class="main-img">
-                            <img src="{{ object.image.url }}" class="img-thumbnail img-fluid">
+                            <img src="{{ service.image.url }}" class="img-thumbnail img-fluid">
                         </div>
                     </div>
                 </div>
                 <!-- for description -->
                 <div class="col-md col-lg service-details">
-                    <h1>{{ object.service }}</h1>
+                    <h1>{{ service.service }}</h1>
                     <!-- Star rating -->
-                    <span class="star-rating" data-rating="{{ object.average_rating }}">
+                    <span class="star-rating" data-rating="{{ service.average_rating }}">
                         <!-- js based starrating -->
                     </span>
-                    <small> {{ object.rating_count }} reviews</small>
+                    <small> {{ service.rating_count }} reviews</small>
                     <hr>
                     <p class="p-desc">
-                        {{ object.desc }}
+                        {{ service.desc }}
                     </p>
                     <div class="pricing">
                         <p>
                             <span>Price:</span>
-                            {% if object.discount == 0 %}
-                                <span class="price-actual">{{ object.actual_price }}</span>
+                            {% if service.discount == 0 %}
+                                <span class="price-actual">{{ service.actual_price }}</span>
                             {% else %}
                                 <span class="price-actual">
-                                    {{ object.actual_price }}
+                                    {{ service.actual_price }}
                                     <del>
-                                        <small>$ {{ object.price }}</small>
+                                        <small>$ {{ service.price }}</small>
                                     </del>
                                 </span>
                             {% endif %}
@@ -59,11 +59,11 @@
                         <div class="row  graphical-avg">
                             <div class="col-md col-lg-5 self-align-right">
                                 <h5> Average user rating</h5>
-                                <h4>{{ object.average_rating }}<span>/5</span></h4>
+                                <h4>{{ service.average_rating }}<span>/5</span></h4>
 
                                 <!-- Star rating -->
-                                <span class="star-rating" data-rating="{{ object.average_rating }}">
-                                    <p>{{ object.average_rating }}</p>
+                                <span class="star-rating" data-rating="{{ service.average_rating }}">
+                                    <p>{{ service.average_rating }}</p>
                                 </span>
                             </div>
                             <!-- Rating Breakdown -->

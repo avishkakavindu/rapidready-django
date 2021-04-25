@@ -1,4 +1,5 @@
 from django.contrib.auth import login
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Prefetch
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
@@ -12,7 +13,7 @@ from django.http import HttpResponseForbidden, HttpResponseRedirect
 from store.util import Util, token_generator
 from django.contrib.auth.models import User
 from django.contrib import messages
-from store.models import Service, Category, Review
+from store.models import Service, Category, Review, Order, OrderedService
 from store.forms import SignUpForm, AddToCartForm, ServiceReviewForm
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -126,10 +127,29 @@ class UserActivationView(View):
         return redirect('login')
 
 
-class ProfileView(UpdateView):
+class ProfileView(LoginRequiredMixin, UpdateView):
+    """ Profile details view """
+
     model = User
     template_name = 'registration/profile.html'
     fields = ['first_name', 'last_name', 'email', 'nic', 'street', 'city', 'state', 'zipcode', 'telephone', 'profile_pic']
+    login_url = '/login'
+    context_object_name = 'user'
+    success_url = reverse_lazy('profile')
+
+    def get_object(self):
+        return self.request.user
+
+    def get_context_data(self, **kwargs):
+        context = super(ProfileView, self).get_context_data()
+        context['orders'] = Order.objects.filter(customer=self.request.user).prefetch_related(
+            Prefetch(
+                'orderedservice_set',
+                OrderedService.objects.only('service'),
+                to_attr='services'
+            ),
+        )
+        return context
 
 
 class ServiceView(FormMixin, DetailView):
@@ -138,6 +158,7 @@ class ServiceView(FormMixin, DetailView):
     model = Service
     template_name = 'store/service.html'
     form_class = ServiceReviewForm
+    context_object_name = 'service'
 
     def get_context_data(self, **kwargs):
         context = super(ServiceView, self).get_context_data()

@@ -11,6 +11,7 @@ id_profile_pic.onchange = function (event) {
 
 // when edit button clicked
 $("#editProfile").click(function(){
-    $(this).text('').append('<i class="fa fa-floppy-o" aria-hidden="true"></i> Save');
+    $(this).addClass('d-none');
+    $('#saveProfile').removeClass('d-none');
     $('#personalDetails').find('input').removeAttr('readonly');
 });
