@@ -10,6 +10,13 @@ body {
     overflow-x: hidden;
 }
 
+/*--- alerts - messages --- */
+.msg {
+    position: absolute;
+    right: 0;
+    z-index: 9999;
+}
+
 /* -- scroll bar --*/
 ::-webkit-scrollbar {
     width: 5px;

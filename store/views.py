@@ -1,5 +1,7 @@
 from django.contrib.auth import login
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import PasswordChangeView
 from django.db.models import Prefetch
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
@@ -132,7 +134,7 @@ class ProfileView(LoginRequiredMixin, UpdateView):
 
     model = User
     template_name = 'registration/profile.html'
-    fields = ['first_name', 'last_name', 'email', 'nic', 'street', 'city', 'state', 'zipcode', 'telephone', 'profile_pic']
+    fields = ['first_name', 'last_name', 'email', 'nic', 'street', 'city', 'state', 'zipcode', 'telephone', 'profile_pic', 'password']
     login_url = '/login'
     context_object_name = 'user'
     success_url = reverse_lazy('profile')
@@ -150,6 +152,15 @@ class ProfileView(LoginRequiredMixin, UpdateView):
             ),
         )
         return context
+
+
+class PasswordsChangeView(PasswordChangeView):
+    form_class = PasswordChangeForm
+    success_url = reverse_lazy('profile')
+
+    def get_success_url(self):
+        messages.add_message(self.request, messages.SUCCESS, 'Password changed successfully!')
+        return reverse('profile')
 
 
 class ServiceView(FormMixin, DetailView):
