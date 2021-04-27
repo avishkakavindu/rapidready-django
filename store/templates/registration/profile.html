@@ -1,0 +1,454 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+
+    <div style="background: url('{% static 'images/main_back.jpg' %}'); background-size: auto;">
+        <div class="container p-5 profile">
+            <div class="row gutters">
+                <!-- profile summary -->
+                <div
+                        class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12 mb-2 profile-summary"
+                >
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="account-settings">
+                                <div class="user-profile">
+                                    <div class="user-avatar">
+                                        <img
+                                                src="{{ user.profile_pic.url }}"
+                                                alt="Maxwell Admin"
+                                                id="frame"
+                                        />
+                                        <span class="profile-pic-edit">
+                        <i class="fa fa-pencil-square" aria-hidden="true"></i>
+                      </span>
+                                    </div>
+                                    <h5 class="user-name">{{ user.first_name }} {{ user.last_name }}</h5>
+                                    <h6 class="user-email">{{ user.email }}</h6>
+                                </div>
+                                <div class="about">
+                                    <h5>Personal info</h5>
+                                    <div class="info">
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <p class="mb-0">Username</p>
+                                            </div>
+                                            <div class="col text-secondary offset-sm-1">
+                                                {{ user.username }}
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <p class="mb-0">Full Name</p>
+                                            </div>
+                                            <div class="col text-secondary offset-sm-1">
+                                                {{ user.first_name }} {{ user.last_name }}
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <p class="mb-0">Email</p>
+                                            </div>
+                                            <div class="col text-secondary">{{ user.email }}</div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <p class="mb-0">Nic</p>
+                                            </div>
+                                            <div class="col text-secondary">{{ user.nic }}</div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <p class="mb-0">Contact </p>
+                                            </div>
+                                            <div class="col text-secondary">{{ user.telephone }}</div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <p class="mb-0">Address</p>
+                                            </div>
+                                            <div class="col text-secondary">
+                                                {{ user.street }},
+                                                {{ user.city }},
+                                                {{ user.state }},
+                                                {{ user.zipcode }}.
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <h5>Interests</h5>
+                                        <div class="row">
+                                            <div class="col-sm">
+                                                <p class="mb-0">
+                                                    <span class="badge bg-primary">#posters</span>
+                                                    <span class="badge bg-primary">#post_cards</span>
+                                                    <span class="badge bg-primary">#posters</span>
+                                                    <span class="badge bg-primary">#post_cards</span>
+                                                    <span class="badge bg-primary">#posters</span>
+                                                    <span class="badge bg-primary">#post_cards</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- profile edit  -->
+                <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <nav>
+                                <div class="nav nav-tabs flex" id="nav-tab" role="tablist">
+                                    <a
+                                            class="nav-item nav-link active"
+                                            id="nav-home-tab"
+                                            data-toggle="tab"
+                                            href="#nav-home"
+                                            role="tab"
+                                            aria-controls="nav-home"
+                                            aria-selected="true"
+                                    >Info <i class="fa fa-info-circle" aria-hidden="true"></i></a
+                                    >
+                                    <a
+                                            class="nav-item nav-link"
+                                            id="nav-order-tab"
+                                            data-toggle="tab"
+                                            href="#nav-order"
+                                            role="tab"
+                                            aria-controls="nav-order"
+                                            aria-selected="false"
+                                    >Orders</a
+                                    >
+                                    <a
+                                            class="nav-item nav-link"
+                                            id="nav-password-tab"
+                                            data-toggle=""
+                                            href="{% url 'change-password' %}"
+                                            role="tab"
+                                            aria-controls="nav-password"
+                                            aria-selected="false"
+                                            style="padding-right: 5px; padding-left: 5px;"
+                                    >Change password</a>
+                                </div>
+                            </nav>
+
+
+                            <!-- Link trigger modal -->
+                            <!-- Modal to view individual order indetail -->
+                            <div class="modal bd-example-modal-lg fade" id="orderModal" tabindex="-1" role="dialog"
+                                 aria-labelledby="orderModalTitle" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="orderModalTitle">Order #0001</h5>
+                                            <a class="close" data-dismiss="modal" aria-label="Close">
+                                                <i class="fa fa-times" aria-hidden="true"></i>
+                                            </a>
+                                        </div>
+                                        <div class="modal-body">
+                                            <!-- order details tables -->
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered">
+                                                    <thead class="thead-light">
+                                                    <tr>
+                                                        <th scope="col" colspan="2">Order Details</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr>
+                                                        <td scope="col">
+                                                            <strong>Order Id:</strong> #0001<br>
+                                                            <strong>Date:</strong> April 24, 2021, 4:44 a.m.<br>
+                                                            <strong>Total:</strong> $ 200
+                                                            <p class="mt-1 mb-0">
+                                                                <b>Payment details:</b><br> Cash on Delivery<br>
+                                                                <!-- {% if order_detail.0.payment_method == 'payhere' %}
+                                            <div class="payhere-order-summary ml-2">
+                                                  Currency: {{ payment_detail.payhere_currency }}<br>
+                                                  Method: {{ payment_detail.method }}<br>
+                                                  Card Holder: {{ payment_detail.card_holder_name }}<br>
+                                                  Card No: {{ payment_detail.card_no }}<br>
+                                            </div>
+                                            {% endif %} -->
+                                                            </p>
+                                                        </td>
+                                                        <td scope="col">
+                                                            <strong>Delivery Address:</strong><br>
+                                                            123, Clear Water Bay Road
+                                                            Clear Water Bay, Kowloon
+                                                            HONG KONG
+                                                            <p>
+                                                                <strong>Contact No:</strong> 0701234567
+                                                            </p>
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+
+                                                <!-- ordered items -->
+                                                <table class="table table-sm table-bordered ordered-items">
+                                                    <thead class="thead-light">
+                                                    <tr>
+                                                        <th scope="col">Service</th>
+                                                        <th scope="col">Quantity</th>
+                                                        <th scope="col">Unit Price</th>
+                                                        <th scope="col">Offers</th>
+                                                        <th scope="col">Total</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr>
+                                                        <td scope="col" id="p_name">
+                                                            <a href="# ">
+                                                                Poster A4
+                                                            </a>
+                                                        </td>
+                                                        <td scope="col">1000</td>
+                                                        <td scope="col">$ 3000.00</td>
+                                                        <td scope="col"> 5% off</td>
+                                                        <td scope="col">$ 2850.00</td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td colspan="4"><strong>Sub-Total</strong></td>
+                                                        <td>
+                                                            $ 2850.00 <br>
+                                                        </td>
+                                                    </tr>
+
+
+                                                    <tr>
+                                                        <td colspan="4"><strong>Coupon Discount</strong></td>
+                                                        <td>
+                                                            -$ 150.00
+                                                        </td>
+
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="4" style="font-size: 15px"><strong>Total</strong>
+                                                        </td>
+                                                        <td style="font-size: 15px"><strong>$ 2850.00</strong></td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer text-center">
+                                            <div class="col text-center">
+                                                <p>Thank you for your order</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end - modal -->
+
+                            <div class="tab-content" id="nav-tabContent">
+                                <!-- nav tab info content -->
+                                <div
+                                        class="tab-pane fade show active"
+                                        id="nav-home"
+                                        role="tabpanel"
+                                        aria-labelledby="nav-home-tab"
+                                >
+                                    <!-- personal details -->
+                                    <form method="post" id="personalDetails" enctype="multipart/form-data" novalidate>
+                                        {% csrf_token %}
+                                        <div class="row gutters mt-3">
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                                <h6 class="mb-2 text-primary mb-3">Personal Details</h6>
+                                            </div>
+                                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <label for="{{ form.firstt_name.auto_id }}">{{ form.first_name.label }}</label>
+                                                    {% if form.firstname.errors %}
+                                                        {% render_field form.first_name class="form-control is-invalid" %}
+                                                    {% else %}
+                                                        {% render_field form.first_name class="form-control" readonly="readonly" %}
+                                                    {% endif %}
+                                                    <div class="invalid-feedback">
+                                                        {% for error in form.first_name.errors %}
+                                                            {{ error }}
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <label for="{{ form.last_name.auto_id }}">{{ form.last_name.label }}</label>4
+                                                    {% if form.lastname.errors %}
+                                                        {% render_field form.last_name class="form-control is-invalid" %}
+                                                    {% else %}
+                                                        {% render_field form.last_name class="form-control" readonly="readonly" %}
+                                                    {% endif %}
+                                                    <div class="invalid-feedback">
+                                                        {% for error in form.last_name.errors %}
+                                                            {{ error }}
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <label for="{{ form.email.auto_id }}">{{ form.email.label }}</label>
+                                                    {% if form.email.errors %}
+                                                        {% render_field form.email class="form-control is-invalid" %}
+                                                    {% else %}
+                                                        {% render_field form.email class="form-control" readonly="readonly" %}
+                                                    {% endif %}
+                                                    <div class="invalid-feedback">
+                                                        {% for error in form.email.errors %}
+                                                            {{ error }}
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <label for="{{ form.nic.auto_id }}">{{ form.Nic.label }}</label>
+                                                    {% if form.nic.errors %}
+                                                        {% render_field form.nic class="form-control is-invalid" %}
+                                                    {% else %}
+                                                        {% render_field form.nic class="form-control" readonly="readonly" %}
+                                                    {% endif %}
+                                                    <div class="invalid-feedback">
+                                                        {% for error in form.nic.errors %}
+                                                            {{ error }}
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <label for="{{ form.telephone.auto_id }}">{{ form.telephone.label }}</label>
+                                                    {% if form.telephone.errors %}
+                                                        {% render_field form.telephone class="form-control is-invalid" %}
+                                                    {% else %}
+                                                        {% render_field form.telephone class="form-control" readonly="readonly" %}
+                                                    {% endif %}
+                                                    <div class="invalid-feedback">
+                                                        {% for error in form.telephone.errors %}
+                                                            {{ error }}
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12 d-none">
+                                                <div class="form-group">
+                                                    <label for="{{ form.profile_pic.auto_id }}">{{ form.profile_pic.label }}</label>
+                                                    <!-- hidden file input field for profile pic -->
+                                                    {% render_field form.profile_pic class="form-control" %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row gutters">
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                                <h6 class="mt-3 mb-2 text-primary">Address</h6>
+                                            </div>
+                                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <label for="{{ form.street.auto_id }}">{{ form.street.label }}</label>
+                                                    {% render_field form.street class="form-control" readonly="readonly" %}
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <label for="{{ form.city.auto_id }}">{{ form.city.label }}</label>
+                                                    {% render_field form.city class="form-control" readonly="readonly" %}
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <label for="{{ form.state.auto_id }}">{{ form.state.label }}</label>
+                                                    {% render_field form.state class="form-control" readonly="readonly" %}
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                                <div class="form-group">
+                                                    <label for="{{ form.zipcode.auto_id }}">{{ form.zipcoe.label }}</label>
+                                                    {% render_field form.zipcode class="form-control" readonly="readonly" %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row gutters">
+                                            <div
+                                                    class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 mt-2"
+                                            >
+                                                <div class="text-right">
+                                                    <button
+                                                            type="button"
+                                                            id="editProfile"
+                                                            name="edit"
+                                                            class="btn btn-primary btn-update"
+                                                    >
+                                                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit
+                                                    </button>
+                                                    <button
+                                                            type="submit"
+                                                            id="saveProfile"
+                                                            name="save"
+                                                            class="btn btn-primary btn-update d-none"
+                                                    >
+                                                        <i class="fa fa-floppy-o" aria-hidden="true"></i> Save Changes
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <!-- address -->
+                                </div>
+                                <!-- order details -->
+                                <div
+                                        class="tab-pane fade"
+                                        id="nav-order"
+                                        role="tabpanel"
+                                        aria-labelledby="nav-order-tab"
+                                >
+                                    {{ orders.0.services.0.desc }}
+                                    <table class="table table-striped table-hover table-responsive orders">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">Order</th>
+                                            <th scope="col">Service(s)</th>
+                                            <th scope="col">Date</th>
+                                            <th scope="col">Total</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for order in orders %}
+                                            <tr>
+                                                <td scope="row">
+                                                    <a href="#orderModal" class="text-primary" data-toggle="modal" data-target="#orderModal">#{{ order.id }}</a>
+                                                </th>
+                                                <td>
+                                                    {% for service in order.services %}
+                                                        {{ service.service }}
+                                                        {% if not forloop.last %}, {% endif %}
+                                                    {% endfor %}
+                                                </td>
+                                                <td>{{ order.created_on }}</td>
+                                                <td>{{ order.get_total }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/profile.js' %}"></script>
+
+{% endblock %}

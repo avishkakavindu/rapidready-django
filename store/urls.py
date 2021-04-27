@@ -6,10 +6,13 @@ from store.views import *
 urlpatterns = [
     # auth
     path('', HomeView.as_view(), name='home'),
-    path('login', auth_views.LoginView.as_view(redirect_authenticated_user=True), name='login'),
-    path('register', SignUpView.as_view(), name='register'),
+    path('login/', auth_views.LoginView.as_view(redirect_authenticated_user=True), name='login'),
+    path('register/', SignUpView.as_view(), name='register'),
     path('activate/<str:uidb64>/<str:token>', UserActivationView.as_view(), name='user_activation'),
     # -------------------
+    # profile
+    path('profile/', ProfileView.as_view(), name='profile'),
+    path('profile/change-password/', PasswordsChangeView.as_view(), name='change-password'),
     # password reset process
     path(
         'password_reset/',
@@ -36,6 +39,6 @@ urlpatterns = [
     ),  # inform success
     # ---------------------
 
-    path('service/<int:pk>', ServiceView.as_view(), name='service'),
+    path('service/<int:pk>/', ServiceView.as_view(), name='service'),
 
 ]

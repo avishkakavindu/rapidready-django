@@ -1,7 +1,9 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+from django.db.models import Sum
 from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
+from django.db.models import F
 from django.utils.html import format_html
 from datetime import datetime
 
@@ -10,7 +12,10 @@ class User(AbstractUser):
     """ User model """
     email = models.EmailField(unique=True)
     nic = models.CharField(max_length=10)
-    address = models.TextField()
+    street = models.CharField(max_length=50)
+    city = models.CharField(max_length=50)
+    state = models.CharField(max_length=50)
+    zipcode = models.CharField(max_length=10)
     telephone = models.CharField(max_length=12)
     profile_pic = models.ImageField(upload_to='images/user', default="images/user/default.jpg")
 
@@ -82,17 +87,32 @@ class Order(models.Model):
     payment_method = models.PositiveSmallIntegerField(choices=PAYMENT_METHOD, null=True, blank=True)
     type = models.PositiveSmallIntegerField(choices=ORDER_TYPES, default=PREDEFINED)
     telephone = models.CharField(max_length=12)
-    total = models.DecimalField(max_digits=10, decimal_places=2)
+    street = models.CharField(max_length=50)
+    city = models.CharField(max_length=50)
+    state = models.CharField(max_length=50)
+    zipcode = models.CharField(max_length=10)
     status = models.PositiveSmallIntegerField(choices=ORDER_STATUS, default=PENDING)
-
+    created_on = models.DateTimeField(default=datetime.now())
+    
     def __str__(self):
         return '{}'.format(self.id)
 
+    @property
+    def get_total(self):
+        ordereditems = OrderedService.objects.filter(order=self)
+        return '$ {:.2f}'.format(
+            sum(
+                [item.get_sale_price for item in ordereditems]
+            )
+        )
+    get_total.fget.short_description = 'Total Amount Paid'
+
+    @property
     def order_type(self):
         if self.status == self.PENDING:
             if self.type == self.PREDEFINED:
                 return format_html(
-                    '<span style=""><i class="fa fa-bell-o mr order-type" aria-hidden="true"></i></span>{}'.format(
+                    '{}'.format(
                         self.get_type_display())
                 )
             else:
@@ -103,6 +123,7 @@ class Order(models.Model):
 
         return self.get_type_display()
 
+    @property
     def order_status(self):
         if self.status == 1:
             return format_html(
@@ -173,12 +194,23 @@ class Service(models.Model):
 class OrderedService(models.Model):
     """ Ordered services and the quantities model """
 
-    order = models.ForeignKey(Order, null=False, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, null=False, on_delete=models.CASCADE, related_name='orderedservice_set')
     service = models.ForeignKey(Service, null=False, on_delete=models.CASCADE)
     quantity = models.PositiveBigIntegerField()
+    discount = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        validators=[MinValueValidator(0),
+                    MaxValueValidator(100)]
+    )
+    unit_price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
         return '{}'.format(self.service)
+
+    @property
+    def get_sale_price(self):
+        return self.unit_price * self.quantity * ((100 - self.discount) /100)
 
 
 class Material(models.Model):

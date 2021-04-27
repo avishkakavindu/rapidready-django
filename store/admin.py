@@ -24,7 +24,10 @@ class UserAdmin(UserAdmin):
             'last_name',
             'email',
             'nic',
-            'address',
+            'street',
+            'city',
+            'state',
+            'zipcode',
             'telephone',
             'profile_pic',
         )}),
@@ -65,7 +68,7 @@ class OrderedServiceInline(admin.StackedInline):
 class OrderAdmin(admin.ModelAdmin):
     """ Orders admin """
 
-    list_display = ['id', 'customer', 'payment_method', 'telephone', 'total', 'order_type', 'order_status']
+    list_display = ['id', 'customer', 'payment_method', 'telephone', 'get_total', 'order_type', 'order_status']
     search_fields = ['id', 'customer__username', 'telephone']
     list_filter = ['type', 'status', 'payment_method']
     ordering = ['status']

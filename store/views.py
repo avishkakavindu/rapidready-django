@@ -1,4 +1,7 @@
 from django.contrib.auth import login
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import PasswordChangeView
 from django.db.models import Prefetch
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
@@ -7,12 +10,12 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.urls import reverse
-from django.views.generic.edit import FormMixin
+from django.views.generic.edit import FormMixin, UpdateView
 from django.http import HttpResponseForbidden, HttpResponseRedirect
 from store.util import Util, token_generator
 from django.contrib.auth.models import User
 from django.contrib import messages
-from store.models import Service, Category, Review
+from store.models import Service, Category, Review, Order, OrderedService
 from store.forms import SignUpForm, AddToCartForm, ServiceReviewForm
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -126,12 +129,47 @@ class UserActivationView(View):
         return redirect('login')
 
 
+class ProfileView(LoginRequiredMixin, UpdateView):
+    """ Profile details view """
+
+    model = User
+    template_name = 'registration/profile.html'
+    fields = ['first_name', 'last_name', 'email', 'nic', 'street', 'city', 'state', 'zipcode', 'telephone', 'profile_pic', 'password']
+    login_url = '/login'
+    context_object_name = 'user'
+    success_url = reverse_lazy('profile')
+
+    def get_object(self):
+        return self.request.user
+
+    def get_context_data(self, **kwargs):
+        context = super(ProfileView, self).get_context_data()
+        context['orders'] = Order.objects.filter(customer=self.request.user).prefetch_related(
+            Prefetch(
+                'orderedservice_set',
+                OrderedService.objects.only('service'),
+                to_attr='services'
+            ),
+        )
+        return context
+
+
+class PasswordsChangeView(PasswordChangeView):
+    form_class = PasswordChangeForm
+    success_url = reverse_lazy('profile')
+
+    def get_success_url(self):
+        messages.add_message(self.request, messages.SUCCESS, 'Password changed successfully!')
+        return reverse('profile')
+
+
 class ServiceView(FormMixin, DetailView):
     """ Service detail view """
 
     model = Service
     template_name = 'store/service.html'
     form_class = ServiceReviewForm
+    context_object_name = 'service'
 
     def get_context_data(self, **kwargs):
         context = super(ServiceView, self).get_context_data()

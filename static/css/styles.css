@@ -10,6 +10,13 @@ body {
     overflow-x: hidden;
 }
 
+/*--- alerts - messages --- */
+.msg {
+    position: absolute;
+    right: 0;
+    z-index: 9999;
+}
+
 /* -- scroll bar --*/
 ::-webkit-scrollbar {
     width: 5px;
@@ -471,4 +478,135 @@ svg.radial-progress {
     float: right;
     font-size: 12px;
     color: #989898;
+}
+
+
+/* --- profile ---*/
+.profile .form-group {
+    margin-bottom: 12px;
+}
+
+.account-settings .user-profile {
+    margin: 0 0 1rem 0;
+    padding-bottom: 1rem;
+    text-align: center;
+}
+.account-settings .user-profile .user-avatar {
+    margin: 0 0 1rem 0;
+}
+.account-settings .user-profile .user-avatar img {
+    width: 90px;
+    height: 90px;
+    -webkit-border-radius: 100px;
+    -moz-border-radius: 100px;
+    border-radius: 100px;
+}
+.account-settings .user-profile h5.user-name {
+    margin: 0 0 0.5rem 0;
+}
+.account-settings .user-profile h6.user-email {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: #9fa8b9;
+}
+.account-settings .about {
+    margin: 2rem 0 0 0;
+    text-align: center;
+}
+
+.info p {
+    text-align: left;
+    font-weight: 500;
+}
+
+.info .row {
+    margin-bottom: 5px;
+    text-align: left;
+}
+
+.profile-summary .text-secondary {
+    font-size: small;
+    margin-left: 10px;
+}
+
+.account-settings .about h5 {
+    margin: 0 0 15px 0;
+    color: #007ae1;
+}
+.account-settings .about p {
+    font-size: 0.825rem;
+}
+.form-control {
+    border: 1px solid #cfd1d8;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    font-size: .825rem;
+    background: #ffffff;
+    color: #2e323c;
+}
+
+.card {
+    background: #ffffff;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    border: 0;
+    margin-bottom: 1rem;
+}
+
+.btn-update {
+    float: right;
+}
+
+.table-responsive{
+    text-decoration: none;
+}
+
+/*-- profilepic--*/
+.profile-pic-edit {
+    position: absolute;
+    z-index: 999;
+}
+
+.profile-pic-edit:hover {
+    color:#0d6efd;
+}
+
+/*-- modal --*/
+#orderModal a, a:link{
+    text-decoration: none;
+}
+
+#orderModal .modal-body table a {
+    color: #007bff;
+}
+
+#orderModal .modal-body table a:hover {
+    text-decoration: underline;
+}
+
+#orderModal .modal-body table {
+    font-size: 12px;
+    color: #181818;
+}
+
+.modal-content {border: 0px solid rgba(0, 0, 0, 0.2);}
+
+.fa-times:hover {
+    color:#dc3545;
+}
+
+#personalDetails input:read-only {
+    background-color: transparent;
+    color: #6c757d;
+}
+
+#nav-order table {
+    font-size: 12px;
+}
+
+#nav-order table td {
+    color: #000000aa;
 }
