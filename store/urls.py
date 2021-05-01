@@ -38,7 +38,11 @@ urlpatterns = [
         name='password_reset_complete'
     ),  # inform success
     # ---------------------
-
+    # services
     path('service/<int:pk>/', ServiceView.as_view(), name='service'),
+    # ---------------------
+    # orders
+    path('order/<int:pk>/', OrderView.as_view(), name='order'),
+    # ---------------------
 
 ]

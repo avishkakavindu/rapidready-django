@@ -1,3 +1,5 @@
+import os
+
 from django.db.models import signals
 from django.contrib.auth.models import Group
 from django.db.models.signals import pre_save, post_delete
@@ -27,6 +29,24 @@ def remove_material(sender, instance, *args, **kwargs):
     quantity = Material.objects.get(id=instance.material.id)
     quantity.available_unit = quantity.available_unit - instance.quantity
     quantity.save()
+
+
+@receiver(pre_save, sender=User)
+def delete_old_file(sender, instance, **kwargs):
+    """ removes old profile pic """
+    if instance._state.adding and not instance.pk:
+        return False
+
+    try:
+        old_profile_pic = sender.objects.get(pk=instance.pk).profile_pic
+    except sender.DoesNotExist:
+        return False
+
+    # comparing the new file with the old one
+    new_profile_pic = instance.profile_pic
+    if not old_profile_pic == new_profile_pic:
+        if os.path.isfile(old_profile_pic.path):
+            os.remove(old_profile_pic.path)
 
 
 # @receiver(pre_save, sender=User)

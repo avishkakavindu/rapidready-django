@@ -21,7 +21,7 @@
                                                 alt="Maxwell Admin"
                                                 id="frame"
                                         />
-                                        <span class="profile-pic-edit">
+                                        <span class="profile-pic-edit editProfile">
                         <i class="fa fa-pencil-square" aria-hidden="true"></i>
                       </span>
                                     </div>
@@ -86,12 +86,12 @@
                                         <div class="row">
                                             <div class="col-sm">
                                                 <p class="mb-0">
-                                                    <span class="badge bg-primary">#posters</span>
-                                                    <span class="badge bg-primary">#post_cards</span>
-                                                    <span class="badge bg-primary">#posters</span>
-                                                    <span class="badge bg-primary">#post_cards</span>
-                                                    <span class="badge bg-primary">#posters</span>
-                                                    <span class="badge bg-primary">#post_cards</span>
+                                                {{ categories.0.0 }}
+                                                    {% for order in orders %}
+                                                        {% for service in order.services %}
+                                                            <span class="badge bg-primary">#{{ service.service.category }}</span>
+                                                        {% endfor %}
+                                                    {% endfor %}
                                                 </p>
                                             </div>
                                         </div>
@@ -268,7 +268,7 @@
                                             </div>
                                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                                 <div class="form-group">
-                                                    <label for="{{ form.firstt_name.auto_id }}">{{ form.first_name.label }}</label>
+                                                    <label for="{{ form.first_name.auto_id }}">{{ form.first_name.label }}</label>
                                                     {% if form.firstname.errors %}
                                                         {% render_field form.first_name class="form-control is-invalid" %}
                                                     {% else %}
@@ -387,7 +387,7 @@
                                                             type="button"
                                                             id="editProfile"
                                                             name="edit"
-                                                            class="btn btn-primary btn-update"
+                                                            class="btn btn-primary btn-update editProfile"
                                                     >
                                                         <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit
                                                     </button>
@@ -412,34 +412,41 @@
                                         role="tabpanel"
                                         aria-labelledby="nav-order-tab"
                                 >
-                                    {{ orders.0.services.0.desc }}
-                                    <table class="table table-striped table-hover table-responsive orders">
-                                        <thead>
-                                        <tr>
-                                            <th scope="col">Order</th>
-                                            <th scope="col">Service(s)</th>
-                                            <th scope="col">Date</th>
-                                            <th scope="col">Total</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {% for order in orders %}
+                                    {% if orders %}
+                                        <table class="table table-striped table-hover table-responsive orders">
+                                            <thead>
                                             <tr>
-                                                <td scope="row">
-                                                    <a href="#orderModal" class="text-primary" data-toggle="modal" data-target="#orderModal">#{{ order.id }}</a>
-                                                </th>
-                                                <td>
-                                                    {% for service in order.services %}
-                                                        {{ service.service }}
-                                                        {% if not forloop.last %}, {% endif %}
-                                                    {% endfor %}
-                                                </td>
-                                                <td>{{ order.created_on }}</td>
-                                                <td>{{ order.get_total }}</td>
+                                                <th scope="col">Order</th>
+                                                <th scope="col">Service(s)</th>
+                                                <th scope="col">Date</th>
+                                                <th scope="col">Total</th>
                                             </tr>
-                                        {% endfor %}
-                                        </tbody>
-                                    </table>
+                                            </thead>
+                                            <tbody>
+
+                                            {% for order in orders %}
+                                                <tr>
+                                                    <td scope="row">
+                                                        <a href="#orderModal" class="text-primary" data-toggle="modal"
+                                                           data-target="#orderModal">#{{ order.id }}</a>
+                                                    </th>
+                                                    <td>
+                                                        {% for service in order.services %}
+                                                            {{ service.service }}
+                                                            {% if not forloop.last %}, {% endif %}
+                                                        {% endfor %}
+                                                    </td>
+                                                    <td>{{ order.created_on }}</td>
+                                                    <td>{{ order.get_total }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    {% else %}
+                                        <div class="alert alert-primary mt-2" role="alert">
+                                            No orders found!
+                                        </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>

@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth import login
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -5,13 +7,13 @@ from django.contrib.auth.views import PasswordChangeView
 from django.db.models import Prefetch
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, CreateView, View, FormView, DetailView
+from django.views import generic
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.urls import reverse
 from django.views.generic.edit import FormMixin, UpdateView
-from django.http import HttpResponseForbidden, HttpResponseRedirect
+from django.http import HttpResponseForbidden, HttpResponseRedirect, JsonResponse, HttpResponse
 from store.util import Util, token_generator
 from django.contrib.auth.models import User
 from django.contrib import messages
@@ -19,12 +21,13 @@ from store.models import Service, Category, Review, Order, OrderedService
 from store.forms import SignUpForm, AddToCartForm, ServiceReviewForm
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.core import serializers
 
 
 User = get_user_model()
 
 
-class HomeView(TemplateView):
+class HomeView(generic.TemplateView):
     """ Index view """
 
     template_name = "store/home.html"
@@ -36,7 +39,7 @@ class HomeView(TemplateView):
         return context
 
 
-class SignUpView(CreateView):
+class SignUpView(generic.CreateView):
     """ SignUp view """
 
     form_class = SignUpForm
@@ -106,7 +109,7 @@ class SignUpView(CreateView):
         return self.form_valid(form)
 
 
-class UserActivationView(View):
+class UserActivationView(generic.View):
     """ User activation view """
 
     def get(self, request, uidb64, token, *args, **kwargs):
@@ -129,12 +132,12 @@ class UserActivationView(View):
         return redirect('login')
 
 
-class ProfileView(LoginRequiredMixin, UpdateView):
+class ProfileView(LoginRequiredMixin, generic.UpdateView):
     """ Profile details view """
 
     model = User
     template_name = 'registration/profile.html'
-    fields = ['first_name', 'last_name', 'email', 'nic', 'street', 'city', 'state', 'zipcode', 'telephone', 'profile_pic', 'password']
+    fields = ['first_name', 'last_name', 'email', 'nic', 'street', 'city', 'state', 'zipcode', 'telephone', 'profile_pic']
     login_url = '/login'
     context_object_name = 'user'
     success_url = reverse_lazy('profile')
@@ -147,10 +150,11 @@ class ProfileView(LoginRequiredMixin, UpdateView):
         context['orders'] = Order.objects.filter(customer=self.request.user).prefetch_related(
             Prefetch(
                 'orderedservice_set',
-                OrderedService.objects.only('service'),
+                OrderedService.objects.all(),
                 to_attr='services'
             ),
         )
+        context['categories'] = OrderedService.objects.values_list('service__category').distinct();
         return context
 
 
@@ -163,7 +167,7 @@ class PasswordsChangeView(PasswordChangeView):
         return reverse('profile')
 
 
-class ServiceView(FormMixin, DetailView):
+class ServiceView(FormMixin, generic.DetailView):
     """ Service detail view """
 
     model = Service
@@ -199,4 +203,6 @@ class ServiceView(FormMixin, DetailView):
         else:
 
             return self.form_invalid(form)
+
+
 

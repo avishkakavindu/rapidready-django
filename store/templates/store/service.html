@@ -185,30 +185,36 @@
                                 <div class="container tab-pane active fade show overflow-auto mt-2" id="nav-home" role="tabpanel"
                                      aria-labelledby="nav-home-tab" style="height:400px;">
                                     <!-- Review -->
-                                    {% for review in reviews %}
-                                        <div class="row mt-3 mb-3 border-bottom pb-3 reviews">
-                                            <div class="col-md col-lg-3 text-center">
-                                                <img src="{{ review.user.profile_pic.url }}"
-                                                     class="img-thumbnail rounded-circle review-pic">
-                                                <p class="review-username">
-                                                    {{ review.user }}
-                                                </p>
-                                            </div>
+                                    {% if reviews %}
+                                        {% for review in reviews %}
+                                            <div class="row mt-3 mb-3 border-bottom pb-3 reviews">
+                                                <div class="col-md col-lg-3 text-center">
+                                                    <img src="{{ review.user.profile_pic.url }}"
+                                                         class="img-thumbnail rounded-circle review-pic">
+                                                    <p class="review-username">
+                                                        {{ review.user }}
+                                                    </p>
+                                                </div>
 
-                                            <div class="col-md col-lg">
-                                                <p class="review-desc">
-                                                    {{ review.review|default:"None" }}
-                                                </p>
-                                                <!-- Star rating -->
-                                                <span class="star-rating rev-rating" data-rating="{{ review.rating }}">
-                                                    <p>{{ review.rating }}</p>
+                                                <div class="col-md col-lg">
+                                                    <p class="review-desc">
+                                                        {{ review.review|default:"None" }}
+                                                    </p>
+                                                    <!-- Star rating -->
+                                                    <span class="star-rating rev-rating" data-rating="{{ review.rating }}">
+                                                        <p>{{ review.rating }}</p>
 
-                                                </span>
-                                                <span class="review-date">{{ review.created_on }} </span>
+                                                    </span>
+                                                    <span class="review-date">{{ review.created_on }} </span>
+                                                </div>
                                             </div>
+                                            <!-- End of review -->
+                                        {% endfor %}
+                                    {% else %}
+                                        <div class="alert alert-primary mt-2" role="alert">
+                                            No reviews found! Be the first to review this service.<i class="fa fa-smile-o" aria-hidden="true"></i>
                                         </div>
-                                        <!-- End of review -->
-                                    {% endfor %}
+                                    {% endif %}
                                 </div>
                                 <div class="tab-pane border-bottom mt-2" id="nav-profile" role="tabpanel"
                                      aria-labelledby="nav-profile-tab">

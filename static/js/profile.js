@@ -10,8 +10,8 @@ id_profile_pic.onchange = function (event) {
 }
 
 // when edit button clicked
-$("#editProfile").click(function(){
-    $(this).addClass('d-none');
+$(".editProfile").click(function(){
+    $('#editProfile').addClass('d-none');
     $('#saveProfile').removeClass('d-none');
     $('#personalDetails').find('input').removeAttr('readonly');
 });
