@@ -42,7 +42,7 @@ urlpatterns = [
     path('service/<int:pk>/', ServiceView.as_view(), name='service'),
     # ---------------------
     # orders
-    path('order/<int:pk>/', OrderView.as_view(), name='order'),
+    path('order/<int:pk>/', OrderRetriewAPIView.as_view(), name='retrieve-order'),
     # ---------------------
 
 ]

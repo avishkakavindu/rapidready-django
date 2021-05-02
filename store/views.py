@@ -1,5 +1,3 @@
-import json
-
 from django.contrib.auth import login
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -14,6 +12,10 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.urls import reverse
 from django.views.generic.edit import FormMixin, UpdateView
 from django.http import HttpResponseForbidden, HttpResponseRedirect, JsonResponse, HttpResponse
+from rest_framework import permissions
+
+from store.permissions import IsOwner
+from store.serializers import OrderSerializer
 from store.util import Util, token_generator
 from django.contrib.auth.models import User
 from django.contrib import messages
@@ -22,6 +24,7 @@ from store.forms import SignUpForm, AddToCartForm, ServiceReviewForm
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.core import serializers
+from rest_framework.generics import RetrieveAPIView
 
 
 User = get_user_model()
@@ -205,4 +208,8 @@ class ServiceView(FormMixin, generic.DetailView):
             return self.form_invalid(form)
 
 
+class OrderRetriewAPIView(RetrieveAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    permission_classes = [permissions.IsAuthenticated, IsOwner]
 
