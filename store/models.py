@@ -19,7 +19,11 @@ class User(AbstractUser):
     telephone = models.CharField(max_length=12)
     profile_pic = models.ImageField(upload_to='images/user', default="images/user/default.jpg")
 
+    def __str__(self):
+        return self.username
+
     def role_status(self):
+        """ Icon based role representation on admin panel"""
         if self.groups.filter(name='supplier').exists():
             return format_html(
                 '<span style=""><i class="fa fa-truck mr" aria-hidden="true"></i></span>Supplier'
