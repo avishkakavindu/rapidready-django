@@ -139,12 +139,13 @@
                                     >Change password</a>
                                     <div class="dropdown d-block d-sm-none p-2">
                                         <span class="dropdown-toggle"
-                                                id="dropdownPasswordChange" data-toggle="dropdown" aria-haspopup="true"
-                                                aria-expanded="false">
+                                              id="dropdownPasswordChange" data-toggle="dropdown" aria-haspopup="true"
+                                              aria-expanded="false">
                                             more
                                         </span>
                                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                            <a class="dropdown-item" href="{% url 'change-password' %}">Change Password</a>
+                                            <a class="dropdown-item" href="{% url 'change-password' %}">Change
+                                                Password</a>
                                         </div>
                                     </div>
                                 </div>
@@ -158,7 +159,7 @@
                                 <div class="modal-dialog modal-lg" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="orderModalTitle">Order #0001</h5>
+                                            <h5 class="modal-title" id="orderModalTitle">Order <span class="order_id"><!-- order id --></span></h5>
                                             <a class="close" data-dismiss="modal" aria-label="Close">
                                                 <i class="fa fa-times" aria-hidden="true"></i>
                                             </a>
@@ -175,28 +176,36 @@
                                                     <tbody>
                                                     <tr>
                                                         <td scope="col">
-                                                            <strong>Order Id:</strong> #0001<br>
-                                                            <strong>Date:</strong> April 24, 2021, 4:44 a.m.<br>
-                                                            <strong>Total:</strong> $ 200
+                                                            <strong>Order Id:</strong><span class="order_id">n <!-- order id --></span><br>
+                                                            <strong id="created_on">Date:</strong> <!-- April 24, 2021, 4:44
+                                                            a.m.--><br>
+                                                            <strong id="summary_total">Total:</strong> <!-- total -->
                                                             <p class="mt-1 mb-0">
-                                                                <b>Payment details:</b><br> Cash on Delivery<br>
+                                                                <b>Payment details:</b><br>
+                                                                <span id="payment_method"><!-- payment method --></span><br>
                                                                 <!-- {% if order_detail.0.payment_method == 'payhere' %}
-                                            <div class="payhere-order-summary ml-2">
-                                                  Currency: {{ payment_detail.payhere_currency }}<br>
-                                                  Method: {{ payment_detail.method }}<br>
-                                                  Card Holder: {{ payment_detail.card_holder_name }}<br>
-                                                  Card No: {{ payment_detail.card_no }}<br>
-                                            </div>
-                                            {% endif %} -->
+                                                                        <div class="payhere-order-summary ml-2">
+                                                                              Currency:
+                                                                    {{ payment_detail.payhere_currency }}<br>
+                                                                              Method: {{ payment_detail.method }}<br>
+                                                                              Card Holder:
+                                                                    {{ payment_detail.card_holder_name }}<br>
+                                                                              Card No: {{ payment_detail.card_no }}<br>
+                                                                        </div>
+                                                                        {% endif %} -->
                                                             </p>
                                                         </td>
                                                         <td scope="col">
                                                             <strong>Delivery Address:</strong><br>
-                                                            123, Clear Water Bay Road
-                                                            Clear Water Bay, Kowloon
-                                                            HONG KONG
+                                                            <span id="delivery_address">
+                                                                <!-- Delivery address -->
+{#                                                                123, Clear Water Bay Road#}
+{#                                                                Clear Water Bay, Kowloon#}
+{#                                                                HONG KONG#}
+                                                            </span>
                                                             <p>
-                                                                <strong>Contact No:</strong> 0701234567
+                                                                <strong>Contact No:</strong>
+                                                                <span id="contact_no"><!-- contact number --></span>
                                                             </p>
                                                         </td>
                                                     </tr>
@@ -204,49 +213,47 @@
                                                 </table>
 
                                                 <!-- ordered items -->
-                                                <table class="table table-sm table-bordered ordered-items">
+                                                <table class="table table-sm table-bordered ordered-items" id="order_summary">
                                                     <thead class="thead-light">
-                                                    <tr>
-                                                        <th scope="col">Service</th>
-                                                        <th scope="col">Quantity</th>
-                                                        <th scope="col">Unit Price</th>
-                                                        <th scope="col">Offers</th>
-                                                        <th scope="col">Total</th>
-                                                    </tr>
+                                                        <tr>
+                                                            <th scope="col">Service</th>
+                                                            <th scope="col">Quantity</th>
+                                                            <th scope="col">Unit Price</th>
+                                                            <th scope="col">Offers</th>
+                                                            <th scope="col">Total</th>
+                                                        </tr>
                                                     </thead>
                                                     <tbody>
-                                                    <tr>
-                                                        <td scope="col" id="p_name">
-                                                            <a href="# ">
-                                                                Poster A4
-                                                            </a>
-                                                        </td>
-                                                        <td scope="col">1000</td>
-                                                        <td scope="col">$ 3000.00</td>
-                                                        <td scope="col"> 5% off</td>
-                                                        <td scope="col">$ 2850.00</td>
-                                                    </tr>
+                                                        <tr>
+                                                            <td scope="col" id="p_name">
+                                                                <a href="# ">
+                                                                    Poster A4
+                                                                </a>
+                                                            </td>
+                                                            <td scope="col">1000</td>
+                                                            <td scope="col">$ 3000.00</td>
+                                                            <td scope="col"> 5% off</td>
+                                                            <td scope="col">$ 2850.00</td>
+                                                        </tr>
 
-                                                    <tr>
-                                                        <td colspan="4"><strong>Sub-Total</strong></td>
-                                                        <td>
-                                                            $ 2850.00 <br>
-                                                        </td>
-                                                    </tr>
+                                                        <tr>
+                                                            <td colspan="4"><strong>Sub-Total</strong></td>
+                                                            <td>
+                                                                $ 2850.00 <br>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="4"><strong>Coupon Discount</strong></td>
+                                                            <td>
+                                                                -$ 150.00
+                                                            </td>
 
-
-                                                    <tr>
-                                                        <td colspan="4"><strong>Coupon Discount</strong></td>
-                                                        <td>
-                                                            -$ 150.00
-                                                        </td>
-
-                                                    </tr>
-                                                    <tr>
-                                                        <td colspan="4" style="font-size: 15px"><strong>Total</strong>
-                                                        </td>
-                                                        <td style="font-size: 15px"><strong>$ 2850.00</strong></td>
-                                                    </tr>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="4" style="font-size: 15px"><strong>Total</strong>
+                                                            </td>
+                                                            <td style="font-size: 15px"><strong>$ 2850.00</strong></td>
+                                                        </tr>
                                                     </tbody>
                                                 </table>
                                             </div>

@@ -13,7 +13,6 @@ from django.urls import reverse
 from django.views.generic.edit import FormMixin, UpdateView
 from django.http import HttpResponseForbidden, HttpResponseRedirect, JsonResponse, HttpResponse
 from rest_framework import permissions
-
 from store.permissions import IsOwner
 from store.serializers import OrderSerializer
 from store.util import Util, token_generator
