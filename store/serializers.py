@@ -9,12 +9,12 @@ class OrderedServiceSerializer(serializers.ModelSerializer):
         read_only=True,
         slug_field='service'
     )
-    actual_price = serializers.CharField()
+    get_price_for_ordered_batch = serializers.CharField()
 
     class Meta:
         model = OrderedService
         fields = '__all__'
-        extra_fields = ['actual_price']
+        extra_fields = ['get_price_for_ordered_batch']
 
 
 class OrderSerializer(serializers.ModelSerializer):

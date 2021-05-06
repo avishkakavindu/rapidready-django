@@ -45,28 +45,36 @@ function getOrderDetails(order_id) {
 
 // Handles rendering the AJAX response to the modal
 function renderToModal(payload) {
-    $('#orderModal').find('.order_id').text(` #${payload.id}`);
-    $('#orderModal').find('#created_on').after(` <span>${payload.created_on}</span>`);
-    $('#orderModal').find('#summary_total').after(` <span>${payload.get_total}</span>`);
-    $('#orderModal').find('#payment_method').after(` <span>${payload.payment_method}</span>`);
-    $('#orderModal').find('#delivery_address').after(` <span>${payload.street}, ${payload.city}, ${payload.state}, ${payload.zipcode}</span>`);
-    $('#orderModal').find('#contact_no').after(` <span>${payload.telephone}</span>`);
+    $('#orderModal').find('.order_id').empty().text(` #${payload.id}`);
+    $('#orderModal').find('#created_on').empty().text(`${payload.created_on}`);
+    $('#orderModal').find('#summary_total').empty().text(`${payload.get_total}`);
+    $('#orderModal').find('#payment_method').empty().text(`${payload.payment_method}`);
+    $('#orderModal').find('#delivery_address').empty().text(`${payload.street}, ${payload.city}, ${payload.state}, ${payload.zipcode}`);
+    $('#orderModal').find('#contact_no').empty().text(`${payload.telephone}`);
+    $('#orderModal').find('#order_summary tbody').empty();
     payload.orderedservice_set.forEach(renderItems);
+    $('#orderModal').find('#order_summary tbody').append(`
+                                                        <tr>
+                                                            <td colspan="4" style="font-size: 15px"><strong>Total</strong>
+                                                            </td>
+                                                            <td style="font-size: 15px"><strong>${payload.get_total}</strong></td>
+                                                        </tr>
+`);
 
 }
 
 // Renders ordered items
-
+// * remove 8000 on deploy
 function renderItems(item, index) {
     $('#orderModal').find('#order_summary tbody').append(`<tr>
                                                             <td scope="col" id="p_name">
-                                                                <a href="{% url 'service' ${item.id} %}">
+                                                                <a href=${window.location.protocol + '//' + window.location.hostname}:8000/service/${item.id}/> 
                                                                     ${item.service}
                                                                 </a>
                                                             </td>
                                                             <td scope="col">${item.quantity}</td>
                                                             <td scope="col">$ ${item.unit_price}</td>
-                                                            <td scope="col">${item.discount} off</td>
-                                                            <td scope="col">${item.actual_price}</td>
+                                                            <td scope="col">${item.discount}% off</td>
+                                                            <td scope="col">${item.get_price_for_ordered_batch}</td>
                                                         </tr>`);
 }
