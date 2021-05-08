@@ -216,6 +216,11 @@ class OrderedService(models.Model):
     def get_sale_price(self):
         return self.unit_price * self.quantity * ((100 - self.discount) /100)
 
+    @property
+    def actual_price(self):
+        """ Get sale price """
+        return '$ {:.2f}'.format(self.unit_price - self.unit_price * (self.discount / 100))
+
 
 class Material(models.Model):
     """ Total available materials model"""
