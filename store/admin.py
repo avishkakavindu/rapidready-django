@@ -252,3 +252,9 @@ class CartItemAdmin(admin.ModelAdmin):
     list_display = ['id', 'cart', 'service', 'quantity', 'discount', 'added_on']
     search_field = ['id', 'cart', 'service']
     list_filter = ['service']
+
+
+@admin.register(Quote)
+class Quotes(admin.ModelAdmin):
+    list_display = ['id', 'customer', 'order', 'total']
+    search_fields = ['id', 'customer', 'order']

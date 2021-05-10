@@ -86,10 +86,9 @@
                                         <div class="row">
                                             <div class="col-sm">
                                                 <p class="mb-0">
-                                                    {{ categories.0.0 }}
                                                     {% for order in orders %}
-                                                        {% for service in order.services %}
-                                                            <span class="badge bg-primary">#{{ service.service.category }}</span>
+                                                        {% for service in category_tags %}
+                                                            <span class="badge bg-primary">#{{ service }}</span>
                                                         {% endfor %}
                                                     {% endfor %}
                                                 </p>
@@ -159,7 +158,8 @@
                                 <div class="modal-dialog modal-lg" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="orderModalTitle">Order <span class="order_id"><!-- order id --></span></h5>
+                                            <h5 class="modal-title" id="orderModalTitle">Order <span class="order_id"><!-- order id --></span>
+                                            </h5>
                                             <a class="close" data-dismiss="modal" aria-label="Close">
                                                 <i class="fa fa-times" aria-hidden="true"></i>
                                             </a>
@@ -176,10 +176,15 @@
                                                     <tbody>
                                                     <tr>
                                                         <td scope="col">
-                                                            <strong>Order Id:</strong><span class="order_id">n <!-- order id --></span><br>
-                                                            <strong id="created_on">Date:</strong> <!-- April 24, 2021, 4:44
-                                                            a.m.--><br>
-                                                            <strong id="summary_total">Total:</strong> <!-- total -->
+                                                            <strong>Order Id:</strong>
+                                                            <span class="order_id"> <!-- order id --></span><br>
+
+                                                            <strong>Date:</strong>
+                                                            <span id="created_on"> <!-- April 24, 2021, 4:44 --></span><br>
+
+                                                            <strong>Total:</strong>
+                                                            <span id="summary_total"><!-- total --></span>
+
                                                             <p class="mt-1 mb-0">
                                                                 <b>Payment details:</b><br>
                                                                 <span id="payment_method"><!-- payment method --></span><br>
@@ -213,47 +218,48 @@
                                                 </table>
 
                                                 <!-- ordered items -->
-                                                <table class="table table-sm table-bordered ordered-items" id="order_summary">
+                                                <table class="table table-sm table-bordered ordered-items"
+                                                       id="order_summary">
                                                     <thead class="thead-light">
-                                                        <tr>
-                                                            <th scope="col">Service</th>
-                                                            <th scope="col">Quantity</th>
-                                                            <th scope="col">Unit Price</th>
-                                                            <th scope="col">Offers</th>
-                                                            <th scope="col">Total</th>
-                                                        </tr>
+                                                    <tr>
+                                                        <th scope="col">Service</th>
+                                                        <th scope="col">Quantity</th>
+                                                        <th scope="col">Unit Price</th>
+                                                        <th scope="col">Offers</th>
+                                                        <th scope="col">Total</th>
+                                                    </tr>
                                                     </thead>
                                                     <tbody>
-{#                                                        <tr>#}
-{#                                                            <td scope="col" id="p_name">#}
-{#                                                                <a href="# ">#}
-{#                                                                    Poster A4#}
-{#                                                                </a>#}
-{#                                                            </td>#}
-{#                                                            <td scope="col">1000</td>#}
-{#                                                            <td scope="col">$ 3000.00</td>#}
-{#                                                            <td scope="col"> 5% off</td>#}
-{#                                                            <td scope="col">$ 2850.00</td>#}
-{#                                                        </tr>#}
+                                                    {#                                                        <tr>#}
+                                                    {#                                                            <td scope="col" id="p_name">#}
+                                                    {#                                                                <a href="# ">#}
+                                                    {#                                                                    Poster A4#}
+                                                    {#                                                                </a>#}
+                                                    {#                                                            </td>#}
+                                                    {#                                                            <td scope="col">1000</td>#}
+                                                    {#                                                            <td scope="col">$ 3000.00</td>#}
+                                                    {#                                                            <td scope="col"> 5% off</td>#}
+                                                    {#                                                            <td scope="col">$ 2850.00</td>#}
+                                                    {#                                                        </tr>#}
 
-                                                        <tr>
-                                                            <td colspan="4"><strong>Sub-Total</strong></td>
-                                                            <td>
-                                                                $ 2850.00 <br>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td colspan="4"><strong>Coupon Discount</strong></td>
-                                                            <td>
-                                                                -$ 150.00
-                                                            </td>
-
-                                                        </tr>
-                                                        <tr>
-                                                            <td colspan="4" style="font-size: 15px"><strong>Total</strong>
-                                                            </td>
-                                                            <td style="font-size: 15px"><strong>$ 2850.00</strong></td>
-                                                        </tr>
+                                                    {#                                                        <tr>#}
+                                                    {#                                                            <td colspan="4"><strong>Sub-Total</strong></td>#}
+                                                    {#                                                            <td>#}
+                                                    {#                                                                $ 2850.00 <br>#}
+                                                    {#                                                            </td>#}
+                                                    {#                                                        </tr>#}
+                                                    {#                                                        <tr>#}
+                                                    {#                                                            <td colspan="4"><strong>Coupon Discount</strong></td>#}
+                                                    {#                                                            <td>#}
+                                                    {#                                                                -$ 150.00#}
+                                                    {#                                                            </td>#}
+                                                    {##}
+                                                    {#                                                        </tr>#}
+                                                    {#                                                        <tr>#}
+                                                    {#                                                            <td colspan="4" style="font-size: 15px"><strong>Total</strong>#}
+                                                    {#                                                            </td>#}
+                                                    {#                                                            <td style="font-size: 15px"><strong>$ 2850.00</strong></td>#}
+                                                    {#                                                        </tr>#}
                                                     </tbody>
                                                 </table>
                                             </div>

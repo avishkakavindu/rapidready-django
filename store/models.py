@@ -217,6 +217,10 @@ class OrderedService(models.Model):
         return self.unit_price * self.quantity * ((100 - self.discount) /100)
 
     @property
+    def get_price_for_ordered_batch(self):
+        return '$ {:.2f}'.format(self.get_sale_price)
+
+    @property
     def actual_price(self):
         """ Get sale price """
         return '$ {:.2f}'.format(self.unit_price - self.unit_price * (self.discount / 100))
@@ -314,3 +318,17 @@ class CartItem(models.Model):
                                    validators=[MinValueValidator(0),
                                                MaxValueValidator(100)])
     added_on = models.DateTimeField(default=datetime.now())
+
+
+class Quote(models.Model):
+    """ Quote model """
+
+    customer = models.ForeignKey(User, null=False, on_delete=models.CASCADE)
+    order = models.OneToOneField(Order, null=True, blank=True, on_delete=models.CASCADE)
+    desc = models.TextField(null=False)
+    is_possible = models.BooleanField(default=False)
+    total = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)], null=True, blank=True)
+
+    def __str__(self):
+        return '{} - {}'.format(self.id, self.customer)
+    

@@ -40,7 +40,7 @@
     <div class="container">
         <div class="navbar-brand">
             <a href="#">
-                <img src="{% static 'images/logo.png' %}">
+                <img alt="RapidReady Logo" src="{% static 'images/logo.png' %}">
             </a>
         </div>
 
@@ -82,7 +82,12 @@
 
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#" tabindex="-1" aria-disabled="true">Get Quote</a>
+                    {% if user.is_authenticated %}
+                        <a class="nav-link" href="#" tabindex="-1" aria-disabled="true" data-bs-toggle="modal"
+                           data-bs-target="#getQuote">Get Quote</a>
+                    {% else %}
+                        <a class="nav-link" href="{% url 'login' %}" tabindex="-1" aria-disabled="true">Get Quote</a>
+                    {% endif %}
                 </li>
             </ul>
             <form class="form-inline d-inline" id="search">
@@ -135,7 +140,6 @@
         {% endif %}
         {% if message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
             <div class="alert alert-info alert-dismissible fade show msg" role="alert">
-                <strong><i class="fa fa-gift mr-2" aria-hidden="true"></i>Congratulations! </strong>
                 {{ message }}
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -144,6 +148,50 @@
         {% endif %}
     {% endfor %}
 {% endif %}
+
+<div class="alert alert-dismissible fade msg" id="quote_alert" role="alert">
+    <!-- alert msg -->
+    <a class="close" data-dismiss="alert" aria-label="Close">
+        <i class="fa fa-times" aria-hidden="true"></i>
+    </a>
+</div>
+
+<!-- get quote modal -->
+
+<!-- Place Quote Modal -->
+<div class="modal fade" id="getQuote" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="getQuote-title">Get a Quote for your custom order</h5>
+                <a class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </a>
+            </div>
+            <div class="modal-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="quote_desc" class="form-label">Please describe your order</label>
+                        <textarea class="form-control" id="quote_desc" name="desc" rows="5"></textarea>
+                    </div>
+                    <div class="invalid-feedback" id="quote_feedback">
+                        <!-- Invalid feedback -->
+                    </div>
+                </form>
+                <div class="text-end">
+                    <button type="button" class="btn btn-primary text-end">Get Quote</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="col text-center">
+                    We will send you a emaill about your order!
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 {% block content %}
 
