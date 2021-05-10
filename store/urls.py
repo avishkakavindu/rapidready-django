@@ -43,6 +43,7 @@ urlpatterns = [
     # ---------------------
     # orders
     path('order/<int:pk>/', OrderRetriewAPIView.as_view(), name='retrieve-order'),
+    path('quote/create/', QuoteCreateAPIView.as_view(), name='create-quote'),
     # ---------------------
 
 ]

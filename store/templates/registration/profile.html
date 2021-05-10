@@ -86,10 +86,9 @@
                                         <div class="row">
                                             <div class="col-sm">
                                                 <p class="mb-0">
-                                                    {{ categories.0.0 }}
                                                     {% for order in orders %}
-                                                        {% for service in order.services %}
-                                                            <span class="badge bg-primary">#{{ service.service.category }}</span>
+                                                        {% for service in category_tags %}
+                                                            <span class="badge bg-primary">#{{ service }}</span>
                                                         {% endfor %}
                                                     {% endfor %}
                                                 </p>

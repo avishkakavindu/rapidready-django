@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from store.models import Order, OrderedService
+from store.models import Order, OrderedService, Quote
 
 
 class OrderedServiceSerializer(serializers.ModelSerializer):
@@ -32,3 +32,11 @@ class OrderSerializer(serializers.ModelSerializer):
         extra_fields = ['orderedservice_set', 'get_total']
 
 
+class QuoteSerializer(serializers.ModelSerializer):
+    """ Serializer for Quote model """
+
+    desc = serializers.CharField(max_length=None, min_length=None, allow_blank=False, trim_whitespace=True)
+
+    class Meta:
+        model = Quote
+        fields = ['desc']

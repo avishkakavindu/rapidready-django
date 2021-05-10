@@ -40,3 +40,4 @@ class ServiceReviewForm(forms.ModelForm):
         if rating is None:
             return self.field['rating'].initial
         return rating
+

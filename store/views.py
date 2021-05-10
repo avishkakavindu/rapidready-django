@@ -14,16 +14,16 @@ from django.views.generic.edit import FormMixin, UpdateView
 from django.http import HttpResponseForbidden, HttpResponseRedirect, JsonResponse, HttpResponse
 from rest_framework import permissions
 from store.permissions import IsOwner
-from store.serializers import OrderSerializer
+from store.serializers import OrderSerializer, QuoteSerializer
 from store.util import Util, token_generator
 from django.contrib.auth.models import User
 from django.contrib import messages
-from store.models import Service, Category, Review, Order, OrderedService
+from store.models import Service, Category, Review, Order, OrderedService, Quote
 from store.forms import SignUpForm, AddToCartForm, ServiceReviewForm
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.core import serializers
-from rest_framework.generics import RetrieveAPIView
+from rest_framework.generics import RetrieveAPIView, CreateAPIView
 
 
 User = get_user_model()
@@ -156,7 +156,7 @@ class ProfileView(LoginRequiredMixin, generic.UpdateView):
                 to_attr='services'
             ),
         )
-        context['categories'] = OrderedService.objects.values_list('service__category').distinct();
+        context['category_tags'] = OrderedService.objects.only('service__category').distinct();
         return context
 
 
@@ -208,7 +208,19 @@ class ServiceView(FormMixin, generic.DetailView):
 
 
 class OrderRetriewAPIView(RetrieveAPIView):
+    """ Retrieves Order details API view """
+
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     permission_classes = [permissions.IsAuthenticated, IsOwner]
 
+
+class QuoteCreateAPIView(CreateAPIView):
+    """ Create Quote API view """
+
+    queryset = Quote.objects.all()
+    serializer_class = QuoteSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(customer=self.request.user)
