@@ -12,19 +12,19 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.urls import reverse
 from django.views.generic.edit import FormMixin, UpdateView
 from django.http import HttpResponseForbidden, HttpResponseRedirect, JsonResponse, HttpResponse
-from rest_framework import permissions
+from rest_framework import permissions, status
 from store.permissions import IsOwner
-from store.serializers import OrderSerializer, QuoteSerializer
+from store.serializers import OrderSerializer, QuoteSerializer, CartItemSerializer
 from store.util import Util, token_generator
 from django.contrib.auth.models import User
 from django.contrib import messages
-from store.models import Service, Category, Review, Order, OrderedService, Quote
+from store.models import Service, Category, Review, Order, OrderedService, Quote, CartItem, Cart
 from store.forms import SignUpForm, AddToCartForm, ServiceReviewForm
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.core import serializers
 from rest_framework.generics import RetrieveAPIView, CreateAPIView
-
+from rest_framework.response import Response
 
 User = get_user_model()
 
@@ -139,7 +139,8 @@ class ProfileView(LoginRequiredMixin, generic.UpdateView):
 
     model = User
     template_name = 'registration/profile.html'
-    fields = ['first_name', 'last_name', 'email', 'nic', 'street', 'city', 'state', 'zipcode', 'telephone', 'profile_pic']
+    fields = ['first_name', 'last_name', 'email', 'nic', 'street', 'city', 'state', 'zipcode', 'telephone',
+              'profile_pic']
     login_url = '/login'
     context_object_name = 'user'
     success_url = reverse_lazy('profile')
@@ -224,3 +225,23 @@ class QuoteCreateAPIView(CreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(customer=self.request.user)
+
+
+class CartItemCreateAPIView(CreateAPIView):
+    """ Create Cart item API view """
+
+    queryset = CartItem.objects.all()
+    serializer_class = CartItemSerializer
+
+    # permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        cart = Cart.objects.filter(user=request.user).latest('created_on')
+        if cart is None or not cart.is_active:
+            cart = Cart.objects.create(user=request.user)
+        serializer = CartItemSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save(cart=cart)
+            return Response({'Detail': 'Service added to cart'}, status=status.HTTP_201_CREATED)
+        return Response({'Error': 'Unexpected error occured! Please retry'}, status=status.HTTP_400_BAD_REQUEST)

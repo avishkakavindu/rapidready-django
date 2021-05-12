@@ -249,7 +249,7 @@ class CartAdmin(admin.ModelAdmin):
 
 @admin.register(CartItem)
 class CartItemAdmin(admin.ModelAdmin):
-    list_display = ['id', 'cart', 'service', 'quantity', 'discount', 'added_on']
+    list_display = ['id', 'cart', 'service', 'quantity']
     search_field = ['id', 'cart', 'service']
     list_filter = ['service']
 

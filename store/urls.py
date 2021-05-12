@@ -45,5 +45,6 @@ urlpatterns = [
     path('order/<int:pk>/', OrderRetriewAPIView.as_view(), name='retrieve-order'),
     path('quote/create/', QuoteCreateAPIView.as_view(), name='create-quote'),
     # ---------------------
-
+    # cart
+    path('cart-item/create/', CartItemCreateAPIView.as_view(), name='create-cart-item'),
 ]

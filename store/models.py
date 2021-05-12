@@ -302,6 +302,7 @@ class Cart(models.Model):
 
     user = models.ForeignKey(User, null=False, on_delete=models.DO_NOTHING, related_name="cart_set")
     created_on = models.DateTimeField(default=datetime.now())
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return '{} - {}'.format(self.id, self.user)
@@ -313,11 +314,10 @@ class CartItem(models.Model):
     cart = models.ForeignKey(Cart, null=False, on_delete=models.CASCADE, related_name='cartitem_set')
     service = models.ForeignKey(Service, null=False, on_delete=models.DO_NOTHING, related_name='cartservice_set')
     quantity = models.DecimalField(max_digits=10, decimal_places=0, validators=[MinValueValidator(1)])
-    discount = models.DecimalField(max_digits=5,
-                                   decimal_places=2,
-                                   validators=[MinValueValidator(0),
-                                               MaxValueValidator(100)])
-    added_on = models.DateTimeField(default=datetime.now())
+    is_removed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return '{}'.format(self.id)
 
 
 class Quote(models.Model):

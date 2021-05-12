@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from store.models import Order, OrderedService, Quote
+from store.models import Order, OrderedService, Quote, CartItem, Service
 
 
 class OrderedServiceSerializer(serializers.ModelSerializer):
@@ -40,3 +40,15 @@ class QuoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Quote
         fields = ['desc']
+
+
+class CartItemSerializer(serializers.ModelSerializer):
+    """ Serializer for Cart Item model """
+
+    service = serializers.PrimaryKeyRelatedField(required=True, queryset=Service.objects.all())
+    quantity = serializers.IntegerField(required=True, min_value=1)
+
+    class Meta:
+        model = CartItem
+        fields = ['service', 'quantity']
+

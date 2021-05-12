@@ -1,3 +1,10 @@
+// hide alert
+$(function(){
+    $("[data-hide]").on("click", function(){
+        $("." + $(this).attr("data-hide")).removeClass('show');
+    });
+});
+
 // service rating light up
 $('.star-rating').each(function () {
     var rating = $(this).data('rating');
@@ -57,10 +64,9 @@ $('#getQuote button').click(function () {
             alert.addClass('alert-success show');
             $('#getQuote form').trigger("reset");
             $('#getQuote').modal('toggle');
-            alert.prepend('Quote recieved! Please be patient and wait for a email');
+            alert.find('span').text('Quote recieved! Please be patient and wait for a email');
         }).fail(function (response){
             alert.addClass('alert-danger show');
-            alert.prepend('<b>Error!</b> Invalid input');
+            alert.find('span').text("Error! Invalid input");
         });
-        clearconsole();
 });
