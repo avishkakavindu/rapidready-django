@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.contrib.auth import login
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -23,8 +25,9 @@ from store.forms import SignUpForm, AddToCartForm, ServiceReviewForm
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.core import serializers
-from rest_framework.generics import RetrieveAPIView, CreateAPIView
+from rest_framework.generics import RetrieveAPIView, CreateAPIView, GenericAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
+from rest_framework.mixins import CreateModelMixin, DestroyModelMixin, UpdateModelMixin, RetrieveModelMixin
 
 User = get_user_model()
 
@@ -227,21 +230,32 @@ class QuoteCreateAPIView(CreateAPIView):
         serializer.save(customer=self.request.user)
 
 
-class CartItemCreateAPIView(CreateAPIView):
+class CartItemAPIView(CreateModelMixin, GenericAPIView):
     """ Create Cart item API view """
 
-    queryset = CartItem.objects.all()
     serializer_class = CartItemSerializer
-
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         cart = Cart.objects.filter(user=request.user).latest('created_on')
         if cart is None or not cart.is_active:
             cart = Cart.objects.create(user=request.user)
-        serializer = CartItemSerializer(data=request.data)
+
+        try:
+            item = cart.cartitem_set.get(service=request.data['service'])
+            cartitem_obj = CartItem.objects.get(id=item.id)
+            quantity = Decimal(request.data['quantity']) + item.quantity
+
+            serializer = CartItemSerializer(cartitem_obj, data=request.data)
+
+        except:
+            serializer = CartItemSerializer(data=request.data)
+            quantity = request.data['quantity']
 
         if serializer.is_valid():
-            serializer.save(cart=cart)
+            serializer.save(cart=cart, quantity=quantity)
             return Response({'Detail': 'Service added to cart'}, status=status.HTTP_201_CREATED)
         return Response({'Error': 'Unexpected error occured! Please retry'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# class Cart(RetrieveUpdateDestroyAPIView):

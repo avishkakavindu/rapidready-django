@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from store.models import Order, OrderedService, Quote, CartItem, Service
+from store.models import Order, OrderedService, Quote, CartItem, Service, Cart
 
 
 class OrderedServiceSerializer(serializers.ModelSerializer):
@@ -51,4 +51,15 @@ class CartItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartItem
         fields = ['service', 'quantity']
+
+
+class CartSerializer(serializers.ModelSerializer):
+    """ Serializer for Cart model """
+
+    cartitems = CartItemSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Cart
+        fields = ['id', 'cartitems']
+
 
