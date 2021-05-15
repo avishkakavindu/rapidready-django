@@ -13,10 +13,12 @@ from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.urls import reverse
 from django.views.generic.edit import FormMixin, UpdateView
-from django.http import HttpResponseForbidden, HttpResponseRedirect, JsonResponse, HttpResponse
+from django.http import HttpResponseForbidden, HttpResponseRedirect, JsonResponse, HttpResponse, Http404
 from rest_framework import permissions, status
+from rest_framework.views import APIView
+
 from store.permissions import IsOwner
-from store.serializers import OrderSerializer, QuoteSerializer, CartItemSerializer
+from store.serializers import OrderSerializer, QuoteSerializer, CartItemSerializer, CartSerializer
 from store.util import Util, token_generator
 from django.contrib.auth.models import User
 from django.contrib import messages
@@ -230,7 +232,7 @@ class QuoteCreateAPIView(CreateAPIView):
         serializer.save(customer=self.request.user)
 
 
-class CartItemAPIView(CreateModelMixin, GenericAPIView):
+class CartItemAPIView(CreateModelMixin, DestroyModelMixin, GenericAPIView):
     """ Create Cart item API view """
 
     serializer_class = CartItemSerializer
@@ -254,8 +256,39 @@ class CartItemAPIView(CreateModelMixin, GenericAPIView):
 
         if serializer.is_valid():
             serializer.save(cart=cart, quantity=quantity)
-            return Response({'Detail': 'Service added to cart'}, status=status.HTTP_201_CREATED)
-        return Response({'Error': 'Unexpected error occured! Please retry'}, status=status.HTTP_400_BAD_REQUEST)
+            item_count = cart.cartitem_set.all().count()
+            return Response({'Detail': 'Service added to cart', 'Item Count': item_count}, status=status.HTTP_201_CREATED)
+        return Response({'Error': 'Unexpected error occurred! Please retry'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-# class Cart(RetrieveUpdateDestroyAPIView):
+class CartItemDestroyAPIView(APIView):
+    """ Destroy Cat item API view """
+
+    def get_object(self, pk):
+        try:
+            cart = Cart.objects.filter(is_active=True, user=self.request.user).latest('created_on')
+            return CartItem.objects.get(pk=pk, cart=cart)
+        except:
+            raise Http404
+
+    def delete(self, request, pk, format=None):
+        item = self.get_object(pk)
+        item.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class CartAPIView(RetrieveUpdateDestroyAPIView):
+    """ Cart AOI view  """
+
+    serializer_class = CartSerializer
+    queryset = Cart.objects.all()
+
+    def get_object(self):
+        try:
+            cart = self.queryset.filter(is_active=True, user=self.request.user).latest('created_on')
+        except:
+            cart = Cart.objects.create(user=self.request.user)
+
+        return cart
+
+

@@ -70,3 +70,5 @@ $('#getQuote button').click(function () {
             alert.find('span').text("Error! Invalid input");
         });
 });
+
+// Add to cart from service page

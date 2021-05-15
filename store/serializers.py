@@ -45,21 +45,54 @@ class QuoteSerializer(serializers.ModelSerializer):
 class CartItemSerializer(serializers.ModelSerializer):
     """ Serializer for Cart Item model """
 
+    id = serializers.IntegerField(read_only=True)
     service = serializers.PrimaryKeyRelatedField(required=True, queryset=Service.objects.all())
     quantity = serializers.IntegerField(required=True, min_value=1)
 
     class Meta:
         model = CartItem
-        fields = ['service', 'quantity']
+        fields = ['id', 'service', 'quantity', 'get_total_for_item']
+
+
+# class CartItemDestroySerializer(serializers.ModelSerializer):
+#     """ Serializer for Cart Item model """
+#
+#     id = serializers.IntegerField(read_only=True)
+#
+#     class Meta:
+#         model = CartItem
+#         fields = ['id']
+
 
 
 class CartSerializer(serializers.ModelSerializer):
     """ Serializer for Cart model """
 
-    cartitems = CartItemSerializer(many=True, read_only=True)
+    cartitem_set = CartItemSerializer(many=True)
 
     class Meta:
         model = Cart
-        fields = ['id', 'cartitems']
+        fields = ['id', 'cartitem_set']
+        
+    def update(self, instance, validated_data):
+        items = validated_data.pop('cartitem_set')
+
+        for item in items:
+            if 'id' in item.keys():
+                if CartItem.objects.filter(cart=instance.id, id=item['id']).exists():
+                    cart_item = CartItem.objects.get(id=item['id'])
+                    cart_item.quantity = item.get('quantity', cart_item.quantity)
+                    cart_item.save()
+            elif 'service' in item.keys():
+                try:
+                    cart_item = CartItem.objects.get(cart=instance.id, service=item['service'])
+                except:
+                    cart_item = CartItem.objects.create(cart=instance, service=item['service'])
+
+                cart_item.quantity = item.get('quantity', cart_item.quantity)
+                cart_item.save()
+        return instance
+
+
 
 

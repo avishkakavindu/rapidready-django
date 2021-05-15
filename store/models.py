@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models import Sum
@@ -313,11 +315,15 @@ class CartItem(models.Model):
 
     cart = models.ForeignKey(Cart, null=False, on_delete=models.CASCADE, related_name='cartitem_set')
     service = models.ForeignKey(Service, null=False, on_delete=models.DO_NOTHING, related_name='cartservice_set')
-    quantity = models.DecimalField(max_digits=10, decimal_places=0, validators=[MinValueValidator(1)])
+    quantity = models.DecimalField(max_digits=10, decimal_places=0, validators=[MinValueValidator(1)], default=1)
     is_removed = models.BooleanField(default=False)
 
     def __str__(self):
         return '{}'.format(self.id)
+
+    @property
+    def get_total_for_item(self):
+        return '$ {:.2f}'.format(Decimal(self.service.actual_price.strip('$')) * self.quantity)
 
 
 class Quote(models.Model):
