@@ -213,6 +213,23 @@ class ServiceView(FormMixin, generic.DetailView):
             return self.form_invalid(form)
 
 
+class CartView(generic.TemplateView):
+    """ Cart view """
+
+    template_name = 'store/cart.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['cart'] = Cart.objects.filter(user=self.request.user, is_active=True).prefetch_related(
+            Prefetch(
+                'cartitem_set',
+                CartItem.objects.all(),
+                to_attr='cartitems'
+            ),
+        )
+        return context
+
+
 class OrderRetriewAPIView(RetrieveAPIView):
     """ Retrieves Order details API view """
 
@@ -232,11 +249,19 @@ class QuoteCreateAPIView(CreateAPIView):
         serializer.save(customer=self.request.user)
 
 
-class CartItemAPIView(CreateModelMixin, DestroyModelMixin, GenericAPIView):
+class CartItemAPIView(CreateModelMixin, GenericAPIView):
     """ Create Cart item API view """
 
     serializer_class = CartItemSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        cart = Cart.objects.filter(user=request.user).latest('created_on')
+        if cart is None or not cart.is_active:
+            item_count = 0
+        else:
+            item_count = cart.cartitem_set.all().count()
+        return Response({'Item Count': item_count}, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
         cart = Cart.objects.filter(user=request.user).latest('created_on')

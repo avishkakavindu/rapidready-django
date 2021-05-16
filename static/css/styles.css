@@ -445,7 +445,7 @@ svg.radial-progress {
 }
 
 .pricing input {
-    width: 50px;
+    width: 80px;
 }
 
 .graphical-avg h4 {
@@ -624,4 +624,36 @@ svg.radial-progress {
 
 #dropdownPasswordChange {
     color: #a1a1a1;
+}
+
+/* --- cart ---*/
+#cart {
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.cart-title {
+    /*background-color: #0d6efd;*/
+    padding: 10px;
+    margin-bottom: 10px
+}
+
+.fa-trash:hover {
+    color: #dc3545;
+}
+
+.cart-item {
+    border-color: blue;
+}
+
+.cart-item-link {
+    color: #1D2531;
+}
+
+.cart-total {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.cost {
+    font-weight: 550;
 }

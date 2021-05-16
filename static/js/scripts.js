@@ -1,3 +1,7 @@
+const url = window.location.href.split('/');
+const protocol = url[0];
+const domain = url[2];
+
 // hide alert
 $(function(){
     $("[data-hide]").on("click", function(){
@@ -71,4 +75,45 @@ $('#getQuote button').click(function () {
         });
 });
 
+// Get cart item count
+$('document').ready(function (){
+    let payload = {
+        "url": `${$(location).attr('protocol')}//127.0.0.1:8000/cart-item/`,
+        "method": "GET",
+        "timeout": 0,
+        "dataType": "json",
+    };
+    callCartEndPoints(payload);
+} );
+
 // Add to cart from service page
+$('#add-to-cart').click(function(){
+    let service = $(this).data('service');
+    let quantity = $('#service-quantity').val();
+    let csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
+
+    let payload = {
+        "url": `${$(location).attr('protocol')}//127.0.0.1:8000/cart-item/`,
+        "method": "POST",
+        "timeout": 0,
+        "dataType": "json",
+        "data": {
+            "csrfmiddlewaretoken": csrf_token,
+            'service': service,
+            'quantity': quantity
+        }
+    };
+    callCartEndPoints(payload);
+});
+
+// call cart end points
+function callCartEndPoints(payload){
+    $.ajax(payload).done(function (response) {
+        updateCartIcon(response['Item Count'])
+    });
+}
+
+// update cart icon
+function updateCartIcon(num_of_items){
+    $('#cart-icon-num').text(num_of_items);
+}

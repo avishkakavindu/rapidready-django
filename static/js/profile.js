@@ -32,7 +32,7 @@ for (let i = 0; i < order_links.length; i++) {
 // Handles AJAX request to order retrieving endpoint
 function getOrderDetails(order_id) {
     let payload = {
-        "url": `${$(location).attr('protocol')}//127.0.0.1:8000/order/${order_id}/`,
+        "url": `${protocol}//${domain}/order/${order_id}/`,
         "method": "GET",
         "timeout": 0,
         "dataType": "json",
@@ -69,7 +69,7 @@ function renderToModal(payload) {
 function renderItems(item) {
     $orderModal.find('#order_summary tbody').append(`<tr>
                                                             <td scope="col" id="p_name">
-                                                                <a href=${window.location.protocol + '//' + window.location.hostname}:8000/service/${item.id}/> 
+                                                                <a href=${protocol + '://' + domain}/service/${item.id}/> 
                                                                     ${item.service}
                                                                 </a>
                                                             </td>

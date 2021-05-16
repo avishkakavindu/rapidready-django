@@ -103,7 +103,7 @@
 
             <a class="nav-link d-inline" aria-current="page" href="cart.html">
                 <i class="fa fa-shopping-cart mt-3"></i>
-                <span class="badge rounded-pill bg-light text-dark">3</span>
+                <span id="cart-icon-num" class="badge rounded-pill bg-light text-dark"><!-- item count --></span>
             </a>
             {% if user.is_authenticated %}
                 <a href="{% url 'profile' %}" class="profile-link" id="uname">

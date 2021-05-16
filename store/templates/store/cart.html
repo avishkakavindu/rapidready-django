@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+
+    <!-- cart -->
+    <div class="container" id="cart">
+        <!-- Title -->
+        <div class="col col-sm cart-title bg-dark text-light rounded-top">
+            <h5>
+                Your Cart <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+            </h5>
+        </div>
+
+        {% if cart.0.cartitems %}
+            <!-- cart titles -->
+            <div class="row border-bottom">
+                <div class="col-sm-1 d-md-flex justify-content-center align-items-center remove-btn d-none d-md-block">
+
+                </div>
+                <div class="col-sm-3 d-none d-sm-block">
+                    <h6>Product</h6>
+                </div>
+                <div class="col-sm-3 d-none d-sm-block">
+                    <h6> Description</h6>
+                </div>
+                <div class="col-sm-2 d-none d-sm-block">
+                    <h6>Quantity</h6>
+                </div>
+                <div class="col-sm text-center d-none d-sm-block">
+                    <h6>Price</h6>
+                </div>
+            </div>
+
+            <!-- services # -->
+            {% for item in cart.0.cartitems %}
+            <div class="row border-bottom pb-3 pt-1 cart-item">
+                <div class="col-sm-1 d-md-flex justify-content-center align-items-center remove-btn">
+                    <button type="button" class="btn bg-transparent"
+                            data-action="delete"
+                            data-service="{{ item.id }}">
+                        <i class="fa fa-trash" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <div class="col-sm">
+                    <a href="{% url 'service' pk=item.service.id %}" class="cart-item-link">
+                        <img class="img-fluid img-thumbnail" src="{{ item.service.image.url }}" alt="" width="100"/>
+                    </a>
+                </div>
+
+                <div class="col-sm ms-1">
+                    <a href="{% url 'service' pk=item.service.id %}" class="cart-item-link">
+                        <h5>{{ item.service}}</h5>
+                        <p class="module fades">
+                            {{ item.service.desc|truncatechars:60 }}
+                        </p>
+                    </a>
+                </div>
+
+                <!-- quantity -->
+                <div class="col col-sm input-group my-auto text-center">
+                    <div class="quantity ms-5">
+                        <input type="number" class="update-quantity border-top-0 border-start-0 border-end-0 border-bottom" data-action="q_add" min="1" step="1"
+                               value="{{ item.quantity }}" style="width: 80px"
+                               data-product="">
+
+                    </div>
+                </div>
+                <!-- cost -->
+                <div class="col col-sm mt-lg-5 text-end cost-container">
+                    <span class="cost pe-5">{{ item.get_total_for_item }}</span>
+                </div>
+            </div>
+            {% endfor %}
+            <!-- Summary -->
+           <div class="row border-top border-bottom pt-2 pb-2 justify-content-end cart-total">
+                <div class="col col-sm-2">
+                    Total
+                </div>
+                <div class="col col-sm-2 pe-5 cart-summary-text-align text-end total">
+                    $ 25.00
+                </div>
+            </div>
+            <div class="row justify-content-end">
+                <div class="col col-sm-2 text-right">
+                    <a class="btn btn-primary" href="/checkout" role="button">
+                        <i class="fa fa-credit-card" aria-hidden="true"></i>
+                        <span> CHECKOUT</span>
+                    </a>
+                </div>
+            </div>
+        {% else %}
+            <div class="alert-warning rounded p-3" role="alert" style="margin-bottom: 135px;">
+                Your cart is empty!
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
