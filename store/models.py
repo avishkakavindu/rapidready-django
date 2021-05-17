@@ -99,7 +99,7 @@ class Order(models.Model):
     zipcode = models.CharField(max_length=10)
     status = models.PositiveSmallIntegerField(choices=ORDER_STATUS, default=PENDING)
     created_on = models.DateTimeField(default=datetime.now())
-    
+
     def __str__(self):
         return '{}'.format(self.id)
 
@@ -111,6 +111,7 @@ class Order(models.Model):
                 [item.get_sale_price for item in ordereditems]
             )
         )
+
     get_total.fget.short_description = 'Total Amount Paid'
 
     @property
@@ -216,7 +217,7 @@ class OrderedService(models.Model):
 
     @property
     def get_sale_price(self):
-        return self.unit_price * self.quantity * ((100 - self.discount) /100)
+        return self.unit_price * self.quantity * ((100 - self.discount) / 100)
 
     @property
     def get_price_for_ordered_batch(self):
@@ -309,6 +310,14 @@ class Cart(models.Model):
     def __str__(self):
         return '{} - {}'.format(self.id, self.user)
 
+    @property
+    def get_cart_total(self):
+        return '$ {:.2f}'.format(
+            sum(
+                [Decimal(item.get_total_for_item.strip('$')) for item in self.cartitem_set.all()]
+            )
+        )
+
 
 class CartItem(models.Model):
     """ Cart items model """
@@ -334,8 +343,8 @@ class Quote(models.Model):
     desc = models.TextField(null=False)
     is_possible = models.BooleanField(default=False)
     order_desc = models.TextField(null=True, blank=True)
-    total = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)], null=True, blank=True)
+    total = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)], null=True,
+                                blank=True)
 
     def __str__(self):
         return '{} - {}'.format(self.id, self.customer)
-    

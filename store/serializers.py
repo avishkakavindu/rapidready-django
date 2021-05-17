@@ -54,17 +54,6 @@ class CartItemSerializer(serializers.ModelSerializer):
         fields = ['id', 'service', 'quantity', 'get_total_for_item']
 
 
-# class CartItemDestroySerializer(serializers.ModelSerializer):
-#     """ Serializer for Cart Item model """
-#
-#     id = serializers.IntegerField(read_only=True)
-#
-#     class Meta:
-#         model = CartItem
-#         fields = ['id']
-
-
-
 class CartSerializer(serializers.ModelSerializer):
     """ Serializer for Cart model """
 
@@ -72,7 +61,7 @@ class CartSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Cart
-        fields = ['id', 'cartitem_set']
+        fields = ['id', 'cartitem_set', 'get_cart_total']
         
     def update(self, instance, validated_data):
         items = validated_data.pop('cartitem_set')

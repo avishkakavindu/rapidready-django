@@ -3,8 +3,8 @@ const protocol = url[0];
 const domain = url[2];
 
 // hide alert
-$(function(){
-    $("[data-hide]").on("click", function(){
+$(function () {
+    $("[data-hide]").on("click", function () {
         $("." + $(this).attr("data-hide")).removeClass('show');
     });
 });
@@ -49,34 +49,34 @@ $('.rate-me').mouseover(function () {
 
 // Add quote
 $('#getQuote button').click(function () {
-        let desc = $('#quote_desc').val();
-        let csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
-        let payload = {
-            "url": `${$(location).attr('protocol')}//127.0.0.1:8000/quote/create/`,
-            "method": "POST",
-            "data": {
-                "csrfmiddlewaretoken": csrf_token,
-                "desc": desc
-            },
-            "timeout": 0,
-            "dataType": "json",
-        };
+    let desc = $('#quote_desc').val();
+    let csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
+    let payload = {
+        "url": `${$(location).attr('protocol')}//127.0.0.1:8000/quote/create/`,
+        "method": "POST",
+        "data": {
+            "csrfmiddlewaretoken": csrf_token,
+            "desc": desc
+        },
+        "timeout": 0,
+        "dataType": "json",
+    };
 
-        let alert = $('#quote_alert');
+    let alert = $('#quote_alert');
 
-        $.ajax(payload).done(function (response) {
-            alert.addClass('alert-success show');
-            $('#getQuote form').trigger("reset");
-            $('#getQuote').modal('toggle');
-            alert.find('span').text('Quote recieved! Please be patient and wait for a email');
-        }).fail(function (response){
-            alert.addClass('alert-danger show');
-            alert.find('span').text("Error! Invalid input");
-        });
+    $.ajax(payload).done(function (response) {
+        alert.addClass('alert-success show');
+        $('#getQuote form').trigger("reset");
+        $('#getQuote').modal('toggle');
+        alert.find('span').text('Quote recieved! Please be patient and wait for a email');
+    }).fail(function (response) {
+        alert.addClass('alert-danger show');
+        alert.find('span').text("Error! Invalid input");
+    });
 });
 
 // Get cart item count
-$('document').ready(function (){
+$('document').ready(function () {
     let payload = {
         "url": `${$(location).attr('protocol')}//127.0.0.1:8000/cart-item/`,
         "method": "GET",
@@ -84,10 +84,10 @@ $('document').ready(function (){
         "dataType": "json",
     };
     callCartEndPoints(payload);
-} );
+});
 
 // Add to cart from service page
-$('#add-to-cart').click(function(){
+$('#add-to-cart').click(function () {
     let service = $(this).data('service');
     let quantity = $('#service-quantity').val();
     let csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
@@ -107,13 +107,47 @@ $('#add-to-cart').click(function(){
 });
 
 // call cart end points
-function callCartEndPoints(payload){
+function callCartEndPoints(payload) {
     $.ajax(payload).done(function (response) {
         updateCartIcon(response['Item Count'])
+        return response;
     });
 }
 
 // update cart icon
-function updateCartIcon(num_of_items){
+function updateCartIcon(num_of_items) {
     $('#cart-icon-num').text(num_of_items);
 }
+
+// update cart prices on quantity change
+$('.update-quantity').change(function () {
+    let service = $(this).data('service');
+    let quantity = $(this).val();
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    let payload = {
+        "url": `${$(location).attr('protocol')}//127.0.0.1:8000/cart-detail/`,
+        "method": "PUT",
+        "timeout": 0,
+        "headers": {
+            "Content-Type": "application/json",
+            "X-CSRFTOKEN":csrftoken
+        },
+        "data": JSON.stringify({"cartitem_set": [{"service": service, "quantity": quantity}]}),
+    };
+
+    $.ajax(payload).done(function (response) {
+        for(let i=0; i<response.cartitem_set.length; i++){
+            let cartitem = response.cartitem_set[i];
+            if(cartitem.service === service){
+                $(`#cost-${cartitem.id}`).text(cartitem.get_total_for_item);
+                $('#cart-total').text(response.get_cart_total);
+                break;
+            }
+        }
+
+    });
+
+
+});
+

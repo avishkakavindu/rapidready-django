@@ -309,8 +309,9 @@ class CartAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Cart.objects.all()
 
     def get_object(self):
+        user= User.objects.get(pk=1)
         try:
-            cart = self.queryset.filter(is_active=True, user=self.request.user).latest('created_on')
+            cart = self.queryset.filter(is_active=True, user=user).latest('created_on')
         except:
             cart = Cart.objects.create(user=self.request.user)
 
