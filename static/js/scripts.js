@@ -110,7 +110,6 @@ $('#add-to-cart').click(function () {
 function callCartEndPoints(payload) {
     $.ajax(payload).done(function (response) {
         updateCartIcon(response['Item Count'])
-        return response;
     });
 }
 
@@ -131,15 +130,15 @@ $('.update-quantity').change(function () {
         "timeout": 0,
         "headers": {
             "Content-Type": "application/json",
-            "X-CSRFTOKEN":csrftoken
+            "X-CSRFTOKEN": csrftoken
         },
         "data": JSON.stringify({"cartitem_set": [{"service": service, "quantity": quantity}]}),
     };
 
     $.ajax(payload).done(function (response) {
-        for(let i=0; i<response.cartitem_set.length; i++){
+        for (let i = 0; i < response.cartitem_set.length; i++) {
             let cartitem = response.cartitem_set[i];
-            if(cartitem.service === service){
+            if (cartitem.service === service) {
                 $(`#cost-${cartitem.id}`).text(cartitem.get_total_for_item);
                 $('#cart-total').text(response.get_cart_total);
                 break;
@@ -151,3 +150,28 @@ $('.update-quantity').change(function () {
 
 });
 
+// remove item  from cart
+$('.delete-item').click(function () {
+    let item = $(this).data('item');
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    $(this).parent().parent().remove();
+
+    let payload = {
+        "url": `${$(location).attr('protocol')}//127.0.0.1:8000/cart-item/${item}/`,
+        "method": "DELETE",
+        "timeout": 0,
+        "headers": {
+            "Content-Type": "application/json",
+            "X-CSRFTOKEN": csrftoken
+        },
+    };
+
+    let alert = $('#quote_alert');
+
+    $.ajax(payload).done(function (response) {
+        alert.addClass('alert-danger show');
+        alert.find('span').text('Item removed!');
+        $('#cart-total').text(response['total']);
+    });
+});

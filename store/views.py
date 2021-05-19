@@ -23,7 +23,7 @@ from store.util import Util, token_generator
 from django.contrib.auth.models import User
 from django.contrib import messages
 from store.models import Service, Category, Review, Order, OrderedService, Quote, CartItem, Cart
-from store.forms import SignUpForm, AddToCartForm, ServiceReviewForm
+from store.forms import SignUpForm, ServiceReviewForm, DeliveryForm
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.core import serializers
@@ -195,7 +195,13 @@ class ServiceView(FormMixin, generic.DetailView):
         review.user = self.request.user
         review.service = Service.objects.get(pk=self.kwargs['pk'])
         form.save()
-        messages.success(self.request, ['Your review added successfully!'])
+        messages.success(self.request, 'Your review added successfully!')
+
+        return HttpResponseRedirect(self.request.path_info)
+
+    def form_invalid(self, form):
+        """ handles invalid form """
+        messages.error(self.request, 'Error occurred while submitting your review!')
 
         return HttpResponseRedirect(self.request.path_info)
 
@@ -228,6 +234,44 @@ class CartView(generic.TemplateView):
             ),
         )
         return context
+
+
+class CheckoutView(FormMixin, generic.TemplateView):
+    """ Checkout view  """
+    form_class = DeliveryForm
+    template_name = 'store/checkout.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['cart'] = Cart.objects.filter(user=self.request.user, is_active=True)
+        context['delivery_form'] = self.get_form()
+        return context
+
+    def form_valid(self, form):
+        """ Handles valid form """
+        form = self.form_class(self.request.POST)
+        order = form.save(commit=False)          # create a order
+        order.customer = self.request.user
+        order.type = Order.PREDEFINED
+        order.save()
+
+        cart = Cart.objects.filter(user=self.request.user, is_active=True).latest('created_on')
+        cart.is_active = False
+        cart.save()  # deactivate cart
+
+        for item in cart.cartitem_set.all():
+            order_item = OrderedService.objects.create(order=order, service=item.service, quantity=item.quantity, discount=item.service.discount, unit_price=item.service.price)
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponseForbidden()
+
+        form = self.get_form()
+
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
 
 
 class OrderRetriewAPIView(RetrieveAPIView):
@@ -299,7 +343,7 @@ class CartItemDestroyAPIView(APIView):
     def delete(self, request, pk, format=None):
         item = self.get_object(pk)
         item.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({'total': item.cart.get_cart_total}, status=status.HTTP_200_OK)
 
 
 class CartAPIView(RetrieveUpdateDestroyAPIView):
@@ -309,9 +353,8 @@ class CartAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Cart.objects.all()
 
     def get_object(self):
-        user= User.objects.get(pk=1)
         try:
-            cart = self.queryset.filter(is_active=True, user=user).latest('created_on')
+            cart = self.queryset.filter(is_active=True, user=self.request.user).latest('created_on')
         except:
             cart = Cart.objects.create(user=self.request.user)
 

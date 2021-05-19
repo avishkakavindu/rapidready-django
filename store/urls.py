@@ -50,4 +50,7 @@ urlpatterns = [
     path('cart-item/', CartItemAPIView.as_view(), name='create-cart-item'),
     path('cart-item/<int:pk>/', CartItemDestroyAPIView.as_view(), name='destroy-cart-item'),
     path('cart-detail/', CartAPIView.as_view(), name='cart-detail'),
+    # ---------------------
+    # checkout
+    path('checkout/', CheckoutView.as_view(), name='checkout'),
 ]

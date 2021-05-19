@@ -3,9 +3,12 @@
 {% load widget_tweaks %}
 
 {% block content %}
-
+    <div
+      class="pt-5 pb-5"
+      style="background: url('{% static 'images/main_back.jpg' %}'); background-size: auto"
+    >
     <!-- cart -->
-    <div class="container" id="cart">
+    <div class="container bg-light rounded" id="cart">
         <!-- Title -->
         <div class="col col-sm cart-title bg-dark text-light rounded-top">
             <h5>
@@ -39,9 +42,9 @@
                 {% for item in cart.0.cartitems %}
                     <div class="row border-bottom pb-3 pt-3 cart-item">
                         <div class="col-sm-1 d-md-flex justify-content-center align-items-center remove-btn">
-                            <button type="button" class="btn bg-transparent"
+                            <button type="button" class="btn bg-transparent delete-item"
                                     data-action="delete"
-                                    data-service="{{ item.id }}">
+                                    data-item="{{ item.id }}">
                                 <i class="fa fa-trash" aria-hidden="true"></i>
                             </button>
                         </div>

@@ -231,7 +231,16 @@
                                             {% csrf_token %}
                                             <div class="form-group mb-3">
                                                 <label for="review">Review</label>
-                                                {% render_field form.review class="form-control" %}
+                                                {% if form.review.errors %}
+                                                    {% render_field form.review class="form-control is-invalid" %}
+                                                {% else %}
+                                                    {% render_field form.review class="form-control" %}
+                                                {% endif %}
+                                                <div class="invalid-feedback">
+                                                    {% for error in form.review.errors %}
+                                                        {{ error }}
+                                                    {% endfor %}
+                                                </div>
                                             </div>
 
                                             {% render_field form.rating class="form-control" %}
