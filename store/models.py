@@ -205,7 +205,7 @@ class OrderedService(models.Model):
     """ Ordered services and the quantities model """
 
     order = models.ForeignKey(Order, null=False, on_delete=models.CASCADE, related_name='orderedservice_set')
-    service = models.ForeignKey(Service, null=False, on_delete=models.CASCADE)
+    service = models.ForeignKey(Service, null=False, on_delete=models.CASCADE, related_name='service_set')
     quantity = models.PositiveBigIntegerField()
     discount = models.DecimalField(
         max_digits=5,

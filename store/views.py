@@ -162,7 +162,15 @@ class ProfileView(LoginRequiredMixin, generic.UpdateView):
                 to_attr='services'
             ),
         )
-        context['category_tags'] = OrderedService.objects.only('service__category').distinct();
+        # get distinct service categories
+        context['category_tags'] = Category.objects.distinct().filter(
+            service__in=Service.objects.filter(
+                service_set__in=OrderedService.objects.filter(
+                    order__in=Order.objects.filter(customer=self.request.user)
+                )
+            )
+        )
+
         return context
 
 
@@ -219,10 +227,11 @@ class ServiceView(FormMixin, generic.DetailView):
             return self.form_invalid(form)
 
 
-class CartView(generic.TemplateView):
+class CartView(LoginRequiredMixin, generic.TemplateView):
     """ Cart view """
 
     template_name = 'store/cart.html'
+    login_url = '/login'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -236,14 +245,18 @@ class CartView(generic.TemplateView):
         return context
 
 
-class CheckoutView(FormMixin, generic.TemplateView):
+class CheckoutView(LoginRequiredMixin, FormMixin, generic.TemplateView):
     """ Checkout view  """
     form_class = DeliveryForm
     template_name = 'store/checkout.html'
+    login_url = '/login'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['cart'] = Cart.objects.filter(user=self.request.user, is_active=True)
+        queryset = Cart.objects.filter(user=self.request.user, is_active=True)
+        if not queryset.exists():
+            raise Http404
+        context['cart'] = queryset
         context['delivery_form'] = self.get_form()
         return context
 
@@ -261,6 +274,8 @@ class CheckoutView(FormMixin, generic.TemplateView):
 
         for item in cart.cartitem_set.all():
             order_item = OrderedService.objects.create(order=order, service=item.service, quantity=item.quantity, discount=item.service.discount, unit_price=item.service.price)
+        messages.success(self.request, 'Your order is processing now.')
+        return redirect('profile')
 
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
