@@ -1,3 +1,6 @@
+from decimal import Decimal
+
+from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models import Sum
@@ -67,10 +70,12 @@ class Order(models.Model):
     # payment methods
     PAYHERE = 1
     CASHONDELIVERY = 2
+    STOREPICKUP = 3
 
     PAYMENT_METHOD = [
         (PAYHERE, 'Payhere'),
         (CASHONDELIVERY, 'Cash on delivery'),
+        (STOREPICKUP, 'Store pickup'),
     ]
 
     # order status
@@ -90,25 +95,26 @@ class Order(models.Model):
     desc = models.TextField()
     payment_method = models.PositiveSmallIntegerField(choices=PAYMENT_METHOD, null=True, blank=True)
     type = models.PositiveSmallIntegerField(choices=ORDER_TYPES, default=PREDEFINED)
-    telephone = models.CharField(max_length=12)
-    street = models.CharField(max_length=50)
-    city = models.CharField(max_length=50)
-    state = models.CharField(max_length=50)
-    zipcode = models.CharField(max_length=10)
+    telephone = models.CharField(max_length=12, null=False, blank=False)
+    street = models.CharField(max_length=50, null=False, blank=False)
+    city = models.CharField(max_length=50, null=False, blank=False)
+    state = models.CharField(max_length=50, null=False, blank=False)
+    zipcode = models.CharField(max_length=10, null=False, blank=False)
     status = models.PositiveSmallIntegerField(choices=ORDER_STATUS, default=PENDING)
     created_on = models.DateTimeField(default=datetime.now())
-    
+
     def __str__(self):
         return '{}'.format(self.id)
 
     @property
     def get_total(self):
         ordereditems = OrderedService.objects.filter(order=self)
-        return '$ {:.2f}'.format(
+        return '${:.2f}'.format(
             sum(
                 [item.get_sale_price for item in ordereditems]
             )
         )
+
     get_total.fget.short_description = 'Total Amount Paid'
 
     @property
@@ -180,7 +186,7 @@ class Service(models.Model):
     @property
     def actual_price(self):
         """ Get sale price """
-        return '$ {:.2f}'.format(self.price - self.price * (self.discount / 100))
+        return '${:.2f}'.format(self.price - self.price * (self.discount / 100))
 
     @property
     def average_rating(self):
@@ -199,7 +205,7 @@ class OrderedService(models.Model):
     """ Ordered services and the quantities model """
 
     order = models.ForeignKey(Order, null=False, on_delete=models.CASCADE, related_name='orderedservice_set')
-    service = models.ForeignKey(Service, null=False, on_delete=models.CASCADE)
+    service = models.ForeignKey(Service, null=False, on_delete=models.CASCADE, related_name='service_set')
     quantity = models.PositiveBigIntegerField()
     discount = models.DecimalField(
         max_digits=5,
@@ -214,16 +220,16 @@ class OrderedService(models.Model):
 
     @property
     def get_sale_price(self):
-        return self.unit_price * self.quantity * ((100 - self.discount) /100)
+        return self.unit_price * self.quantity * ((100 - self.discount) / 100)
 
     @property
     def get_price_for_ordered_batch(self):
-        return '$ {:.2f}'.format(self.get_sale_price)
+        return '${:.2f}'.format(self.get_sale_price)
 
     @property
     def actual_price(self):
         """ Get sale price """
-        return '$ {:.2f}'.format(self.unit_price - self.unit_price * (self.discount / 100))
+        return '${:.2f}'.format(self.unit_price - self.unit_price * (self.discount / 100))
 
 
 class Material(models.Model):
@@ -302,9 +308,18 @@ class Cart(models.Model):
 
     user = models.ForeignKey(User, null=False, on_delete=models.DO_NOTHING, related_name="cart_set")
     created_on = models.DateTimeField(default=datetime.now())
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return '{} - {}'.format(self.id, self.user)
+
+    @property
+    def get_cart_total(self):
+        return '${:.2f}'.format(
+            sum(
+                [Decimal(item.get_total_for_item.strip('$')) for item in self.cartitem_set.all()]
+            )
+        )
 
 
 class CartItem(models.Model):
@@ -312,12 +327,15 @@ class CartItem(models.Model):
 
     cart = models.ForeignKey(Cart, null=False, on_delete=models.CASCADE, related_name='cartitem_set')
     service = models.ForeignKey(Service, null=False, on_delete=models.DO_NOTHING, related_name='cartservice_set')
-    quantity = models.DecimalField(max_digits=10, decimal_places=0, validators=[MinValueValidator(1)])
-    discount = models.DecimalField(max_digits=5,
-                                   decimal_places=2,
-                                   validators=[MinValueValidator(0),
-                                               MaxValueValidator(100)])
-    added_on = models.DateTimeField(default=datetime.now())
+    quantity = models.DecimalField(max_digits=10, decimal_places=0, validators=[MinValueValidator(1)], default=1)
+    is_removed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return '{}'.format(self.id)
+
+    @property
+    def get_total_for_item(self):
+        return '${:.2f}'.format(Decimal(self.service.actual_price.strip('$')) * self.quantity)
 
 
 class Quote(models.Model):
@@ -327,8 +345,9 @@ class Quote(models.Model):
     order = models.OneToOneField(Order, null=True, blank=True, on_delete=models.CASCADE)
     desc = models.TextField(null=False)
     is_possible = models.BooleanField(default=False)
-    total = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)], null=True, blank=True)
+    order_desc = models.TextField(null=True, blank=True)
+    total = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)], null=True,
+                                blank=True)
 
     def __str__(self):
         return '{} - {}'.format(self.id, self.customer)
-    

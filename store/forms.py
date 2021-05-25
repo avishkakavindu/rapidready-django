@@ -2,7 +2,7 @@ from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django import forms
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-from store.models import User, Review
+from store.models import User, Review, Order
 
 
 class SignUpForm(UserCreationForm):
@@ -14,12 +14,6 @@ class SignUpForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'email', 'username', 'password1', 'password2']
-
-
-class AddToCartForm(forms.Form):
-    """ Add a service to cart form """
-
-    quantity = forms.IntegerField(validators=[MinValueValidator(1)], required=True)
 
 
 class ServiceReviewForm(forms.ModelForm):
@@ -40,4 +34,13 @@ class ServiceReviewForm(forms.ModelForm):
         if rating is None:
             return self.field['rating'].initial
         return rating
+
+
+class DeliveryForm(forms.ModelForm):
+    """ Add delivery details to the order """
+
+    class Meta:
+        model = Order
+        fields = '__all__'
+        exclude = ['customer', 'desc', 'type', 'status', 'created_on']
 

@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.contrib.auth import login
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -11,20 +13,23 @@ from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.urls import reverse
 from django.views.generic.edit import FormMixin, UpdateView
-from django.http import HttpResponseForbidden, HttpResponseRedirect, JsonResponse, HttpResponse
-from rest_framework import permissions
+from django.http import HttpResponseForbidden, HttpResponseRedirect, JsonResponse, HttpResponse, Http404
+from rest_framework import permissions, status
+from rest_framework.views import APIView
+
 from store.permissions import IsOwner
-from store.serializers import OrderSerializer, QuoteSerializer
+from store.serializers import OrderSerializer, QuoteSerializer, CartItemSerializer, CartSerializer
 from store.util import Util, token_generator
 from django.contrib.auth.models import User
 from django.contrib import messages
-from store.models import Service, Category, Review, Order, OrderedService, Quote
-from store.forms import SignUpForm, AddToCartForm, ServiceReviewForm
+from store.models import Service, Category, Review, Order, OrderedService, Quote, CartItem, Cart
+from store.forms import SignUpForm, ServiceReviewForm, DeliveryForm
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.core import serializers
-from rest_framework.generics import RetrieveAPIView, CreateAPIView
-
+from rest_framework.generics import RetrieveAPIView, CreateAPIView, GenericAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.response import Response
+from rest_framework.mixins import CreateModelMixin, DestroyModelMixin, UpdateModelMixin, RetrieveModelMixin
 
 User = get_user_model()
 
@@ -139,7 +144,8 @@ class ProfileView(LoginRequiredMixin, generic.UpdateView):
 
     model = User
     template_name = 'registration/profile.html'
-    fields = ['first_name', 'last_name', 'email', 'nic', 'street', 'city', 'state', 'zipcode', 'telephone', 'profile_pic']
+    fields = ['first_name', 'last_name', 'email', 'nic', 'street', 'city', 'state', 'zipcode', 'telephone',
+              'profile_pic']
     login_url = '/login'
     context_object_name = 'user'
     success_url = reverse_lazy('profile')
@@ -156,7 +162,15 @@ class ProfileView(LoginRequiredMixin, generic.UpdateView):
                 to_attr='services'
             ),
         )
-        context['category_tags'] = OrderedService.objects.only('service__category').distinct();
+        # get distinct service categories
+        context['category_tags'] = Category.objects.distinct().filter(
+            service__in=Service.objects.filter(
+                service_set__in=OrderedService.objects.filter(
+                    order__in=Order.objects.filter(customer=self.request.user)
+                )
+            )
+        )
+
         return context
 
 
@@ -189,7 +203,13 @@ class ServiceView(FormMixin, generic.DetailView):
         review.user = self.request.user
         review.service = Service.objects.get(pk=self.kwargs['pk'])
         form.save()
-        messages.success(self.request, ['Your review added successfully!'])
+        messages.success(self.request, 'Your review added successfully!')
+
+        return HttpResponseRedirect(self.request.path_info)
+
+    def form_invalid(self, form):
+        """ handles invalid form """
+        messages.error(self.request, 'Error occurred while submitting your review!')
 
         return HttpResponseRedirect(self.request.path_info)
 
@@ -204,6 +224,68 @@ class ServiceView(FormMixin, generic.DetailView):
             return self.form_valid(form)
         else:
 
+            return self.form_invalid(form)
+
+
+class CartView(LoginRequiredMixin, generic.TemplateView):
+    """ Cart view """
+
+    template_name = 'store/cart.html'
+    login_url = '/login'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['cart'] = Cart.objects.filter(user=self.request.user, is_active=True).prefetch_related(
+            Prefetch(
+                'cartitem_set',
+                CartItem.objects.all(),
+                to_attr='cartitems'
+            ),
+        )
+        return context
+
+
+class CheckoutView(LoginRequiredMixin, FormMixin, generic.TemplateView):
+    """ Checkout view  """
+    form_class = DeliveryForm
+    template_name = 'store/checkout.html'
+    login_url = '/login'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        queryset = Cart.objects.filter(user=self.request.user, is_active=True)
+        if not queryset.exists():
+            raise Http404
+        context['cart'] = queryset
+        context['delivery_form'] = self.get_form()
+        return context
+
+    def form_valid(self, form):
+        """ Handles valid form """
+        form = self.form_class(self.request.POST)
+        order = form.save(commit=False)          # create a order
+        order.customer = self.request.user
+        order.type = Order.PREDEFINED
+        order.save()
+
+        cart = Cart.objects.filter(user=self.request.user, is_active=True).latest('created_on')
+        cart.is_active = False
+        cart.save()  # deactivate cart
+
+        for item in cart.cartitem_set.all():
+            order_item = OrderedService.objects.create(order=order, service=item.service, quantity=item.quantity, discount=item.service.discount, unit_price=item.service.price)
+        messages.success(self.request, 'Your order is processing now.')
+        return redirect('profile')
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponseForbidden()
+
+        form = self.get_form()
+
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
             return self.form_invalid(form)
 
 
@@ -224,3 +306,73 @@ class QuoteCreateAPIView(CreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(customer=self.request.user)
+
+
+class CartItemAPIView(CreateModelMixin, GenericAPIView):
+    """ Create Cart item API view """
+
+    serializer_class = CartItemSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        cart = Cart.objects.filter(user=request.user).latest('created_on')
+        if cart is None or not cart.is_active:
+            item_count = 0
+        else:
+            item_count = cart.cartitem_set.all().count()
+        return Response({'Item Count': item_count}, status=status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+        cart = Cart.objects.filter(user=request.user).latest('created_on')
+        if cart is None or not cart.is_active:
+            cart = Cart.objects.create(user=request.user)
+
+        try:
+            item = cart.cartitem_set.get(service=request.data['service'])
+            cartitem_obj = CartItem.objects.get(id=item.id)
+            quantity = Decimal(request.data['quantity']) + item.quantity
+
+            serializer = CartItemSerializer(cartitem_obj, data=request.data)
+
+        except:
+            serializer = CartItemSerializer(data=request.data)
+            quantity = request.data['quantity']
+
+        if serializer.is_valid():
+            serializer.save(cart=cart, quantity=quantity)
+            item_count = cart.cartitem_set.all().count()
+            return Response({'Detail': 'Service added to cart', 'Item Count': item_count}, status=status.HTTP_201_CREATED)
+        return Response({'Error': 'Unexpected error occurred! Please retry'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CartItemDestroyAPIView(APIView):
+    """ Destroy Cat item API view """
+
+    def get_object(self, pk):
+        try:
+            cart = Cart.objects.filter(is_active=True, user=self.request.user).latest('created_on')
+            return CartItem.objects.get(pk=pk, cart=cart)
+        except:
+            raise Http404
+
+    def delete(self, request, pk, format=None):
+        item = self.get_object(pk)
+        item.delete()
+        return Response({'total': item.cart.get_cart_total}, status=status.HTTP_200_OK)
+
+
+class CartAPIView(RetrieveUpdateDestroyAPIView):
+    """ Cart AOI view  """
+
+    serializer_class = CartSerializer
+    queryset = Cart.objects.all()
+
+    def get_object(self):
+        try:
+            cart = self.queryset.filter(is_active=True, user=self.request.user).latest('created_on')
+        except:
+            cart = Cart.objects.create(user=self.request.user)
+
+        return cart
+
+

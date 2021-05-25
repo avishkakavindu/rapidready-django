@@ -42,16 +42,20 @@
                                 </span>
                             {% endif %}
                         </p>
-
-                        <p>
-                            <span>Quantity: </span>
-                            <input class="quantity" min="0" name="quantity" value="100" type="number">
-                        </p>
-                        <button type="button" class="btn btn-outline-primary update-cart" data-action="add-serving"
-                                data-product="product_details.0.id _ product_details.0.get_sale_price|floatformat:2  product_details.0.name ">
-                            <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-                            <span> Add to cart</span>
-                        </button>
+                        <form>
+                            {% csrf_token %}
+                            <p>
+                                <span>Quantity: </span>
+                                <input id="service-quantity" class="quantity" min="0" name="quantity" value="100"
+                                       type="number">
+                            </p>
+                            <button id="add-to-cart" type="button" class="btn btn-outline-primary update-cart"
+                                    data-action="add-serving"
+                                    data-service="{{ service.id }}">
+                                <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+                                <span> Add to cart</span>
+                            </button>
+                        </form>
                     </div>
 
                     <!-- Review summary -->
@@ -182,7 +186,8 @@
                                 </div>
                             </nav>
                             <div class="tab-content" id="nav-tabContent">
-                                <div class="container tab-pane active fade show overflow-auto mt-2" id="nav-home" role="tabpanel"
+                                <div class="container tab-pane active fade show overflow-auto mt-2" id="nav-home"
+                                     role="tabpanel"
                                      aria-labelledby="nav-home-tab" style="height:400px;">
                                     <!-- Review -->
                                     {% if reviews %}
@@ -201,7 +206,8 @@
                                                         {{ review.review|default:"None" }}
                                                     </p>
                                                     <!-- Star rating -->
-                                                    <span class="star-rating rev-rating" data-rating="{{ review.rating }}">
+                                                    <span class="star-rating rev-rating"
+                                                          data-rating="{{ review.rating }}">
                                                         <p>{{ review.rating }}</p>
 
                                                     </span>
@@ -212,7 +218,8 @@
                                         {% endfor %}
                                     {% else %}
                                         <div class="alert alert-primary mt-2" role="alert">
-                                            No reviews found! Be the first to review this service.<i class="fa fa-smile-o" aria-hidden="true"></i>
+                                            No reviews found! Be the first to review this service.<i
+                                                class="fa fa-smile-o" aria-hidden="true"></i>
                                         </div>
                                     {% endif %}
                                 </div>
@@ -224,7 +231,16 @@
                                             {% csrf_token %}
                                             <div class="form-group mb-3">
                                                 <label for="review">Review</label>
-                                                {% render_field form.review class="form-control" %}
+                                                {% if form.review.errors %}
+                                                    {% render_field form.review class="form-control is-invalid" %}
+                                                {% else %}
+                                                    {% render_field form.review class="form-control" %}
+                                                {% endif %}
+                                                <div class="invalid-feedback">
+                                                    {% for error in form.review.errors %}
+                                                        {{ error }}
+                                                    {% endfor %}
+                                                </div>
                                             </div>
 
                                             {% render_field form.rating class="form-control" %}

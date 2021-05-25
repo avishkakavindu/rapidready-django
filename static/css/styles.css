@@ -445,7 +445,7 @@ svg.radial-progress {
 }
 
 .pricing input {
-    width: 50px;
+    width: 80px;
 }
 
 .graphical-avg h4 {
@@ -625,3 +625,86 @@ svg.radial-progress {
 #dropdownPasswordChange {
     color: #a1a1a1;
 }
+
+/* --- cart ---*/
+#cart {
+    padding-right: 0;
+    padding-left: 0;
+    padding-bottom: 20px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+#cart .row {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.cart-title {
+    /*background-color: #0d6efd;*/
+    padding: 10px;
+    margin-bottom: 10px
+}
+
+.fa-trash:hover {
+    color: #dc3545;
+}
+
+.cart-item {
+    border-color: blue;
+}
+
+.cart-item-link {
+    color: #1D2531;
+}
+
+.cart-total {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.cost {
+    font-weight: 550;
+}
+
+/* --- checkout.html --- */
+#checkout {
+    padding: 20px;
+}
+
+#checkout h4 {
+    color: #6c757d;
+}
+
+#checkout .badge{
+    background-color: #0dcaf0;
+    font-size: 15px;
+}
+
+#checkoutForm  .col-sm-6 {
+    margin-bottom: 20px;
+}
+
+#checkout h6,#checkout h5 {
+    color: #202020;
+    font-weight: lighter;
+}
+
+.cart-summary {
+    padding-top: 20px;
+    height:fit-content;
+}
+
+#checkoutForm {
+    padding: 20px;
+}
+
+#checkoutForm label {
+    color: #202020;
+}
+
+#checkoutForm h4 {
+    padding-bottom: 20px;
+    font-weight:550;
+    color: #6c757d;
+}
+

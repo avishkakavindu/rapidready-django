@@ -249,7 +249,7 @@ class CartAdmin(admin.ModelAdmin):
 
 @admin.register(CartItem)
 class CartItemAdmin(admin.ModelAdmin):
-    list_display = ['id', 'cart', 'service', 'quantity', 'discount', 'added_on']
+    list_display = ['id', 'cart', 'service', 'quantity']
     search_field = ['id', 'cart', 'service']
     list_filter = ['service']
 
@@ -258,3 +258,8 @@ class CartItemAdmin(admin.ModelAdmin):
 class Quotes(admin.ModelAdmin):
     list_display = ['id', 'customer', 'order', 'total']
     search_fields = ['id', 'customer', 'order']
+
+    def render_change_form(self, request, context, *args, **kwargs):
+        form_instance = context['adminform'].form
+        form_instance.fields['order_desc'].widget.attrs['placeholder'] = 'Describe the services want by the customer'
+        return super().render_change_form(request, context, *args, **kwargs)

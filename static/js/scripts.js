@@ -1,3 +1,14 @@
+const url = window.location.href.split('/');
+const protocol = url[0];
+const domain = url[2];
+
+// hide alert
+$(function () {
+    $("[data-hide]").on("click", function () {
+        $("." + $(this).attr("data-hide")).removeClass('show');
+    });
+});
+
 // service rating light up
 $('.star-rating').each(function () {
     var rating = $(this).data('rating');
@@ -38,29 +49,129 @@ $('.rate-me').mouseover(function () {
 
 // Add quote
 $('#getQuote button').click(function () {
-        let desc = $('#quote_desc').val();
-        let csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
-        let payload = {
-            "url": `${$(location).attr('protocol')}//127.0.0.1:8000/quote/create/`,
-            "method": "POST",
-            "data": {
-                "csrfmiddlewaretoken": csrf_token,
-                "desc": desc
-            },
-            "timeout": 0,
-            "dataType": "json",
-        };
+    let desc = $('#quote_desc').val();
+    let csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
+    let payload = {
+        "url": `${$(location).attr('protocol')}//127.0.0.1:8000/quote/create/`,
+        "method": "POST",
+        "data": {
+            "csrfmiddlewaretoken": csrf_token,
+            "desc": desc
+        },
+        "timeout": 0,
+        "dataType": "json",
+    };
 
-        let alert = $('#quote_alert');
+    let alert = $('#quote_alert');
 
-        $.ajax(payload).done(function (response) {
-            alert.addClass('alert-success show');
-            $('#getQuote form').trigger("reset");
-            $('#getQuote').modal('toggle');
-            alert.prepend('Quote recieved! Please be patient and wait for a email');
-        }).fail(function (response){
-            alert.addClass('alert-danger show');
-            alert.prepend('<b>Error!</b> Invalid input');
-        });
-        clearconsole();
+    $.ajax(payload).done(function (response) {
+        alert.addClass('alert-success show');
+        $('#getQuote form').trigger("reset");
+        $('#getQuote').modal('toggle');
+        alert.find('span').text('Quote recieved! Please be patient and wait for a email');
+    }).fail(function (response) {
+        alert.addClass('alert-danger show');
+        alert.find('span').text("Error! Invalid input");
+    });
+});
+
+// Get cart item count
+$('document').ready(function () {
+    let payload = {
+        "url": `${$(location).attr('protocol')}//127.0.0.1:8000/cart-item/`,
+        "method": "GET",
+        "timeout": 0,
+        "dataType": "json",
+    };
+    callCartEndPoints(payload);
+});
+
+// Add to cart from service page
+$('#add-to-cart').click(function () {
+    let service = $(this).data('service');
+    let quantity = $('#service-quantity').val();
+    let csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
+
+    let payload = {
+        "url": `${$(location).attr('protocol')}//127.0.0.1:8000/cart-item/`,
+        "method": "POST",
+        "timeout": 0,
+        "dataType": "json",
+        "data": {
+            "csrfmiddlewaretoken": csrf_token,
+            'service': service,
+            'quantity': quantity
+        }
+    };
+    callCartEndPoints(payload);
+});
+
+// call cart end points
+function callCartEndPoints(payload) {
+    $.ajax(payload).done(function (response) {
+        updateCartIcon(response['Item Count'])
+    });
+}
+
+// update cart icon
+function updateCartIcon(num_of_items) {
+    $('#cart-icon-num').text(num_of_items);
+}
+
+// update cart prices on quantity change
+$('.update-quantity').change(function () {
+    let service = $(this).data('service');
+    let quantity = $(this).val();
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    let payload = {
+        "url": `${$(location).attr('protocol')}//127.0.0.1:8000/cart-detail/`,
+        "method": "PUT",
+        "timeout": 0,
+        "headers": {
+            "Content-Type": "application/json",
+            "X-CSRFTOKEN": csrftoken
+        },
+        "data": JSON.stringify({"cartitem_set": [{"service": service, "quantity": quantity}]}),
+    };
+
+    $.ajax(payload).done(function (response) {
+        for (let i = 0; i < response.cartitem_set.length; i++) {
+            let cartitem = response.cartitem_set[i];
+            if (cartitem.service === service) {
+                $(`#cost-${cartitem.id}`).text(cartitem.get_total_for_item);
+                $('#cart-total').text(response.get_cart_total);
+                break;
+            }
+        }
+
+    });
+
+
+});
+
+// remove item  from cart
+$('.delete-item').click(function () {
+    let item = $(this).data('item');
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    $(this).parent().parent().remove();
+
+    let payload = {
+        "url": `${$(location).attr('protocol')}//127.0.0.1:8000/cart-item/${item}/`,
+        "method": "DELETE",
+        "timeout": 0,
+        "headers": {
+            "Content-Type": "application/json",
+            "X-CSRFTOKEN": csrftoken
+        },
+    };
+
+    let alert = $('#quote_alert');
+
+    $.ajax(payload).done(function (response) {
+        alert.addClass('alert-danger show');
+        alert.find('span').text('Item removed!');
+        $('#cart-total').text(response['total']);
+    });
 });
