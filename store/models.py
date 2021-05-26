@@ -92,7 +92,7 @@ class Order(models.Model):
     ]
 
     customer = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
-    desc = models.TextField()
+    desc = models.TextField(null=True)
     payment_method = models.PositiveSmallIntegerField(choices=PAYMENT_METHOD, null=True, blank=True)
     type = models.PositiveSmallIntegerField(choices=ORDER_TYPES, default=PREDEFINED)
     telephone = models.CharField(max_length=12, null=False, blank=False)
@@ -137,22 +137,22 @@ class Order(models.Model):
     def order_status(self):
         if self.status == 1:
             return format_html(
-                '<span style=""><i class="fa fa-clock-o pending mr" aria-hidden="true"></i></span>{}'.format(
+                '<span style=""><i class="fa fa-spinner fa-pulse fa-fw pending mr" aria-hidden="true"></i></span> {}'.format(
                     self.get_status_display())
             )
         elif self.status == 2:
             return format_html(
-                '<span style=""><i class="fa fa-cogs processing mr" aria-hidden="true"></i></span>{}'.format(
+                '<span style=""><i class="fa fa-cog fa-spin processing mr" aria-hidden="true"></i></span> {}'.format(
                     self.get_status_display())
             )
         elif self.status == 3:
             return format_html(
-                '<span style=""><i class="fa fa-truck delivered mr" aria-hidden="true"></i></span>{}'.format(
+                '<span style=""><i class="fa fa-truck delivered mr" aria-hidden="true"></i></span> {}'.format(
                     self.get_status_display())
             )
         else:
             return format_html(
-                '<span style=""><i class="fa fa-ban canceled mr" aria-hidden="true"></i></span>{}'.format(
+                '<span style=""><i class="fa fa-ban canceled mr" aria-hidden="true"></i></span> {}'.format(
                     self.get_status_display())
             )
 
@@ -274,8 +274,8 @@ class Stock(models.Model):
 class ServiceMaterial(models.Model):
     """ Materials required by each service model """
 
-    service = models.ForeignKey(Service, null=True, on_delete=models.CASCADE)
-    material = models.ForeignKey(Material, null=False, on_delete=models.CASCADE)
+    service = models.ForeignKey(Service, null=True, on_delete=models.CASCADE, related_name='servicematerial_set')
+    material = models.ForeignKey(Material, null=False, on_delete=models.CASCADE, related_name='material_Set')
     quantity = models.DecimalField(max_digits=5, decimal_places=2,
                                    validators=[MinValueValidator(0), MaxValueValidator(999)],
                                    help_text='Material needed for one unit. Ex: 1 business card 1/20 of 14pt business '

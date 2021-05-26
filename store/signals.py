@@ -3,7 +3,9 @@ from django.contrib import messages
 from django.contrib.sites.models import Site
 from django.db.models.signals import pre_save, post_delete, post_save, pre_delete
 from django.dispatch import receiver
-from .models import Stock, Material, User, Quote
+from rest_framework import status
+from rest_framework.response import Response
+from .models import Stock, Material, User, Quote, Order
 from .util import Util
 
 
@@ -101,4 +103,4 @@ def send_quotation_canceled(sender, instance, **kwargs):
         subject = 'Your quote has being rejected'
 
         send_notify_email(customer.email, customer.username, email_body, object_path, link_text, reason, subject)
-
+    

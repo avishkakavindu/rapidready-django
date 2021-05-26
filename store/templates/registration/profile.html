@@ -170,7 +170,10 @@
                                                 <table class="table table-bordered">
                                                     <thead class="thead-light">
                                                     <tr>
-                                                        <th scope="col" colspan="2">Order Details</th>
+                                                        <th scope="col" colspan="2">
+                                                            Order Details
+                                                            <span class="float-end" id="order_status"><!-- status --></span>
+                                                        </th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
@@ -445,6 +448,7 @@
                                                 <th scope="col">Service(s)</th>
                                                 <th scope="col">Date</th>
                                                 <th scope="col">Total</th>
+                                                <th scope="col">Status</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -467,6 +471,7 @@
                                                     </td>
                                                     <td>{{ order.created_on }}</td>
                                                     <td>{{ order.get_total }}</td>
+                                                    <td>{{ order.order_status }}</td>
                                                 </tr>
                                             {% endfor %}
                                             </tbody>
