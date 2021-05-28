@@ -467,6 +467,8 @@
                                                         {% for service in order.services %}
                                                             {{ service.service }}
                                                             {% if not forloop.last %}, {% endif %}
+                                                        {% empty %}
+                                                            {{ order.desc }}
                                                         {% endfor %}
                                                     </td>
                                                     <td>{{ order.created_on }}</td>

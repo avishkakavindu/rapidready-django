@@ -108,12 +108,15 @@ class Order(models.Model):
 
     @property
     def get_total(self):
-        ordereditems = OrderedService.objects.filter(order=self)
-        return '${:.2f}'.format(
-            sum(
-                [item.get_sale_price for item in ordereditems]
+        if self.type != self.CUSTOM:
+            ordereditems = OrderedService.objects.filter(order=self)
+            return '${:.2f}'.format(
+                sum(
+                    [item.get_sale_price for item in ordereditems]
+                )
             )
-        )
+        quote = Quote.objects.get(order=self.id)
+        return '${:.2f}'.format(quote.total)
 
     get_total.fget.short_description = 'Total Amount Paid'
 

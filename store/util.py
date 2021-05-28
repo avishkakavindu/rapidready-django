@@ -27,9 +27,13 @@ class EmailThread(threading.Thread):
 
 class Util:
     @staticmethod
-    def send_email(data):
-        msg_plain = render_to_string('email/email_normal_email.txt', data['email_body'])
-        msg_html = render_to_string('email/email_normal_email.html', data['email_body'])
+    def send_email(data, email=''):
+        if email != 'quote_email':
+            msg_plain = render_to_string('email/email_normal_email.txt', data['email_body'])
+            msg_html = render_to_string('email/email_normal_email.html', data['email_body'])
+        else:
+            msg_html = render_to_string('email/email_quote_email.html', data['email_body'])
+            msg_plain = ''
 
         msg = EmailMultiAlternatives(data['email_subject'], msg_plain, config('EMAIL_HOST_USER'), [data['receiver']])
         msg.attach_alternative(msg_html, "text/html")

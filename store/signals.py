@@ -3,13 +3,16 @@ from django.contrib import messages
 from django.contrib.sites.models import Site
 from django.db.models.signals import pre_save, post_delete, post_save, pre_delete
 from django.dispatch import receiver
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 from rest_framework import status
 from rest_framework.response import Response
 from .models import Stock, Material, User, Quote, Order
-from .util import Util
+from .util import Util, token_generator
+from django.urls import reverse
 
 
-def send_notify_email(reciever, username, email_body, object_path, link_text, reason, subject):
+def send_notify_email(reciever, username, email_body, object_path, link_text, reason, subject, cancel_link='', cancel_link_text='', quote_desc='', quote_price='', email_type=''):
     """ sends notify email """
 
     site = Site.objects.get_current().domain
@@ -22,13 +25,17 @@ def send_notify_email(reciever, username, email_body, object_path, link_text, re
             'email_body': email_body,
             'link': '{}{}'.format(site, object_path),
             'link_text': link_text,
+            'cancel_link': cancel_link,
+            'cancel_link_text': cancel_link_text,
             'email_reason': '{} {}'.format(reason, domain),
-            'site_name': domain
+            'site_name': domain,
+            'quote_desc': quote_desc,
+            'quote_price': quote_price
         },
         'email_subject': subject,
     }
 
-    Util.send_email(payload)
+    Util.send_email(payload, email_type)
 
 
 @receiver(pre_save, sender=Stock)
@@ -79,14 +86,36 @@ def send_quotation(sender, instance, **kwargs):
     """ sends email upon quotation approval """
 
     if instance.is_possible:
+
+        uidb64 = urlsafe_base64_encode(force_bytes(instance.customer.pk))
+        token = token_generator.make_token(instance.customer)
+        quote_id = instance.pk
+
+        site = Site.objects.get_current().domain
+        link_cancel = reverse('delete-quotation', kwargs={'uidb64': uidb64, 'token': token, 'quote_id': quote_id})
+        link_checkout = reverse('quote-checkout', kwargs={'quote':quote_id})
+
+        url_cancel = '{}{}'.format(site[:-1], link_cancel)
+        url_checkout = '{}{}'.format(site[:-1], link_checkout)
+
         customer = instance.customer
         email_body = 'Please follow the link to view the quotation.'
         object_path = 'checkout'
         link_text = 'Please follow the link'
+        link = url_checkout
         reason = "You're receiving this email because you place a quote request on"
         subject = 'Your quotation is ready'
+        cancel_link = url_cancel
+        cancel_link_text = 'cancel order'
+        email_type = 'quote_email'
+        quote_desc = instance.order_desc
+        quote_price = instance.total
 
-        send_notify_email(customer.email, customer.username, email_body, object_path, link_text, reason, subject)
+        send_notify_email(
+            customer.email, customer.username, email_body, object_path,
+            link_text, reason, subject, cancel_link, cancel_link_text,
+            quote_desc, quote_price, email_type
+        )
 
 
 @receiver(pre_delete, sender=Quote, dispatch_uid='quote_delete_signal')
