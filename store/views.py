@@ -289,6 +289,76 @@ class CheckoutView(LoginRequiredMixin, FormMixin, generic.TemplateView):
             return self.form_invalid(form)
 
 
+class QuoteCheckoutView(LoginRequiredMixin, generic.View):
+    """ Checkout for quote order """
+    form_class = DeliveryForm
+    template_name = 'store/checkout.html'
+    model = Order
+    login_url = '/login'
+
+    def get(self, request, quote):
+        if not Quote.objects.filter(pk=quote, customer=request.user, order__isnull=True).exists():
+            raise Http404
+
+        context = {
+            'delivery_form': self.form_class,
+            'quote': Quote.objects.get(pk=quote, customer=request.user),
+        }
+
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        """ add order type and add relationship to quote """
+
+        quote = Quote.objects.get(pk=self.kwargs['quote'])
+        form = DeliveryForm(request.POST)
+        if form.is_valid():
+            order = form.save(commit=False)
+            order.type = self.model.CUSTOM
+            order.desc = quote.order_desc
+            order.customer = request.user
+            order.save()
+            quote.order = order
+            quote.save()
+
+            messages.success(self.request, 'Your order is processing now.')
+            return redirect('profile')
+        messages.error(self.request, 'Error occurred during order processing!')
+
+        context = {
+            'delivery_form': form,
+            'quote': quote
+        }
+        print(context)
+        return render(request, self.template_name, context)
+
+
+class QuoteDeleteView(generic.View):
+    """ Delete quote view """
+
+    model = Quote
+    success_url = 'home'
+
+    def get(self, request, uidb64, token, quote_id, *args, **kwargs):
+        try:
+            uid = force_text(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            user = None
+
+        if user is not None and token_generator.check_token(user, token):
+            try:
+                quote = Quote.objects.get(customer=user, pk=quote_id)
+            except Quote.DoesNotExist:
+                messages.error(request, 'Failed to delete quote!')
+                return redirect('home')
+
+            quote.delete()
+            messages.success(request, 'Quote deleted successfully!')
+            return redirect('home')
+
+
+
 class OrderRetriewAPIView(RetrieveAPIView):
     """ Retrieves Order details API view """
 

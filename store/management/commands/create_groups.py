@@ -10,6 +10,10 @@ GROUPS = {
         "service material": ['add', 'change', 'delete', 'view'],
         "service": ['add', 'change', 'delete', 'view'],
         "category": ['add', 'change', 'delete', 'view'],
+        "cart": ['add', 'change', 'delete', 'view'],
+        "cart item": ['add', 'change', 'delete', 'view'],
+        "review": ['add', 'change', 'delete', 'view'],
+        "quote": ['add', 'change', 'delete', 'view'],
     },
     'production team': {
         "order": ['change','view'],
@@ -30,7 +34,10 @@ GROUPS = {
 
 
 class Command(BaseCommand):
-    """ Programmatic Group and Permission creation """
+    """
+    Programmatic Group and Permission creation
+    >>> python manage.py create_groups
+    """
 
     help = 'Creates read only default permission groups for users'
 

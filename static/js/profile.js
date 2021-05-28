@@ -47,6 +47,7 @@ function getOrderDetails(order_id) {
 // Handles rendering the AJAX response to the modal
 function renderToModal(payload) {
     $orderModal.find('.order_id').empty().text(` #${payload.id}`);
+    $orderModal.find('#order_status').empty().append(getOrderStatus(payload.status));
     $orderModal.find('#created_on').empty().text(`${payload.created_on}`);
     $orderModal.find('#summary_total').empty().text(`${payload.get_total}`);
     $orderModal.find('#payment_method').empty().text(`${payload.payment_method}`);
@@ -60,14 +61,30 @@ function renderToModal(payload) {
                                                             </td>
                                                             <td style="font-size: 15px"><strong>${payload.get_total}</strong></td>
                                                         </tr>
-`);
+    `);
+}
+
+// create order status
+function getOrderStatus(status) {
+    ele = ''
+    if (status === 'Processing') {
+        ele = `Status: <i class="fa fa-cog fa-spin fa-fw"></i> ${status}`;
+    } else if (status === 'Pending') {
+        ele = `Status: <i class="fa fa-spinner fa-pulse fa-fw"></i> ${status}`;
+    } else if (status === 'Delivered') {
+        ele = `Status: <i class="fa fa-spinner fa-pulse fa-fw"></i> ${status}`;
+    } else {
+        ele = `Status: <i class="fa fa-ban fa-stack-2x text-danger"></i> ${status}`;
+    }
+    return ele
 
 }
 
 // Renders ordered items
 // * remove 8000 on deploy
 function renderItems(item) {
-    $orderModal.find('#order_summary tbody').append(`<tr>
+    if (payload.type === 'Custom Order') {
+        $orderModal.find('#order_summary tbody').append(`<tr>
                                                             <td scope="col" id="p_name">
                                                                 <a href=${protocol + '://' + domain}/service/${item.id}/> 
                                                                     ${item.service}
@@ -78,4 +95,18 @@ function renderItems(item) {
                                                             <td scope="col">${item.discount}% off</td>
                                                             <td scope="col">${item.get_price_for_ordered_batch}</td>
                                                         </tr>`);
+
+    } else {
+        $orderModal.find('#order_summary tbody').append(`<tr>
+                                                            <td scope="col" id="p_name">
+                                                                <a href=${protocol + '://' + domain}/service/${item.id}/> 
+                                                                    ${item.service}
+                                                                </a>
+                                                            </td>
+                                                            <td scope="col">${item.quantity}</td>
+                                                            <td scope="col">$ ${item.unit_price}</td>
+                                                            <td scope="col">${item.discount}% off</td>
+                                                            <td scope="col">${item.get_price_for_ordered_batch}</td>
+                                                        </tr>`);
+    }
 }

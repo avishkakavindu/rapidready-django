@@ -11,27 +11,52 @@
     >
         <div class="container" id="checkout">
             <div class="row mt-3">
-                <!-- cart summary -->
-                <div class="col-sm bg-light border rounded cart-summary me-2">
-                    <h4 class="mb-4">
-                        Your Cart <span
-                            class="badge rounded-pill text-dark">    {{ cart.0.cartitem_set.all.count }}</span></h4>
-                    <ul class="list-group mb-3 z-depth-1">
-                        {% for item in cart.0.cartitem_set.all %}
+                {% if quote %}
+                    <!-- cart summary -->
+                    <div class="col-sm bg-light border rounded cart-summary me-2">
+                        <h4 class="mb-4">
+                            Your Quotation
+                        </h4>
+                        <ul class="list-group mb-3 z-depth-1">
+
                             <li class="list-group-item d-flex justify-content-between lh-condensed">
                                 <div>
-                                    <h6 class="my-0">{{ item.service }}</h6>
-                                    <small class="text-muted module checkout-fades">{{ item.service.desc|truncatechars:30 }} </small>
+                                    <h6 class="my-0">Services</h6>
+                                    <small class="text-muted module checkout-fades">{{ quote.order_desc }} </small>
                                 </div>
-                                <span class="text-muted">{{ item.get_total_for_item }}</span>
+                                <span class="text-muted">${{ quote.total }}</span>
                             </li>
-                        {% endfor %}
-                        <li class="list-group-item d-flex justify-content-between border-1">
-                            <h5 class="font-weight-bold">Total (USD)</h5>
-                            <strong class="text-dark h6">{{ cart.0.get_cart_total }}</strong>
-                        </li>
-                    </ul>
-                </div>
+
+                            <li class="list-group-item d-flex justify-content-between border-1">
+                                <h5 class="font-weight-bold">Total (USD)</h5>
+                                <strong class="text-dark h6">${{ quote.total }}</strong>
+                            </li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <!-- cart summary -->
+                    <div class="col-sm bg-light border rounded cart-summary me-2">
+                        <h4 class="mb-4">
+                            Your Cart <span
+                                class="badge rounded-pill text-dark">    {{ cart.0.cartitem_set.all.count }}</span></h4>
+                        <ul class="list-group mb-3 z-depth-1">
+                            {% for item in cart.0.cartitem_set.all %}
+                                <li class="list-group-item d-flex justify-content-between lh-condensed">
+                                    <div>
+                                        <h6 class="my-0">{{ item.service }}</h6>
+                                        <small class="text-muted module checkout-fades">{{ item.service.desc|truncatechars:30 }} </small>
+                                    </div>
+                                    <span class="text-muted">{{ item.get_total_for_item }}</span>
+                                </li>
+                            {% endfor %}
+                            <li class="list-group-item d-flex justify-content-between border-1">
+                                <h5 class="font-weight-bold">Total (USD)</h5>
+                                <strong class="text-dark h6">{{ cart.0.get_cart_total }}</strong>
+                            </li>
+                        </ul>
+                    </div>
+                {% endif %}
+
                 <!-- checkout form -->
                 <div class="col-sm-8 bg-light border rounded mt-2 mt-sm-0" id="checkoutForm">
                     <h4 class="font-weight-bold border-bottom">Delivery Details</h4>

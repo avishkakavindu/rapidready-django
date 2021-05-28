@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.db.models import F
+from django.contrib import messages
 
 from .models import *
 
@@ -89,6 +90,49 @@ class OrderAdmin(admin.ModelAdmin):
         if request.user.groups.filter(name='production team').exists():
             return self.production_team_read_only
         return super(OrderAdmin, self).get_readonly_fields(request, obj=obj)
+
+    def save_model(self, request, obj, form, change):
+        """ update the stock upon order status change to processing """
+
+        pre_status = Order.objects.get(id=obj.id).status
+        super().save_model(request, obj, form, change)
+
+        if obj.status == obj.PROCESSING and (pre_status == obj.PENDING or pre_status == obj.CANCELED):
+            orderedservices = obj.orderedservice_set.all()
+            can_fulfill = True
+            for orderedservice in orderedservices:
+                materials = orderedservice.service.servicematerial_set.all()    # materials required for a service
+                for material in materials:
+                    for mat in materials:
+                        """ checks if materials are available in required quantities """
+                        req_for_order = mat.quantity * orderedservice.quantity
+                        if mat.material.available_unit < req_for_order:
+                            can_fulfill = False
+                            break
+                    if can_fulfill:
+                        req_for_order = material.quantity * orderedservice.quantity
+                        material.material.available_unit -= req_for_order
+                        material.material.save()
+                    else:
+                        break
+            if can_fulfill:
+                messages.success(request, "Material stocks updated!")
+            else:
+                obj.status = pre_status
+                obj.save()
+                messages.error(request, "Required materials are NOT SUFFICIENT!")
+
+        elif obj.status == obj.CANCELED:
+            if pre_status != obj.PENDING:
+                orderedservices = obj.orderedservice_set.all()
+                for orderedservice in orderedservices:
+                    materials = orderedservice.service.servicematerial_set.all()  # materials required for a service
+                    for material in materials:
+                        req_for_order = material.quantity * orderedservice.quantity
+                        material.material.available_unit += req_for_order
+                        material.material.save()
+
+            messages.error(request, "Order canceled!")
 
 
 class ServiceCategoryInline(admin.StackedInline):

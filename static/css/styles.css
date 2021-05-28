@@ -497,6 +497,11 @@ svg.radial-progress {
     margin-bottom: 12px;
 }
 
+#order_status {
+    font-weight: 500;
+    color: #7F8FA4;
+}
+
 .account-settings .user-profile {
     margin: 0 0 1rem 0;
     padding-bottom: 1rem;
