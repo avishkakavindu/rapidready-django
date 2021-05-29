@@ -54,7 +54,25 @@ function renderToModal(payload) {
     $orderModal.find('#delivery_address').empty().text(`${payload.street}, ${payload.city}, ${payload.state}, ${payload.zipcode}`);
     $orderModal.find('#contact_no').empty().text(`${payload.telephone}`);
     $orderModal.find('#order_summary tbody').empty();
-    payload.orderedservice_set.forEach(renderItems);
+
+    if (payload.type === 'Custom Order') {
+                $orderModal.find('#table-headings').empty().append(
+            `   <th scope="col" colspan="4">Services</th>
+                <th scope="col">Total</th>`
+        );
+
+        renderQuoteItems(payload.desc, payload.get_total);
+    }else{
+        $orderModal.find('#table-headings').append(
+            `   <th scope="col">Service</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Unit Price</th>
+                <th scope="col">Offers</th>
+                <th scope="col">Total</th>`
+        );
+
+        payload.orderedservice_set.forEach(renderItems);
+    }
     $orderModal.find('#order_summary tbody').append(`
                                                         <tr>
                                                             <td colspan="4" style="font-size: 15px"><strong>Total</strong>
@@ -63,6 +81,8 @@ function renderToModal(payload) {
                                                         </tr>
     `);
 }
+
+
 
 // create order status
 function getOrderStatus(status) {
@@ -83,7 +103,6 @@ function getOrderStatus(status) {
 // Renders ordered items
 // * remove 8000 on deploy
 function renderItems(item) {
-    if (payload.type === 'Custom Order') {
         $orderModal.find('#order_summary tbody').append(`<tr>
                                                             <td scope="col" id="p_name">
                                                                 <a href=${protocol + '://' + domain}/service/${item.id}/> 
@@ -96,17 +115,17 @@ function renderItems(item) {
                                                             <td scope="col">${item.get_price_for_ordered_batch}</td>
                                                         </tr>`);
 
-    } else {
-        $orderModal.find('#order_summary tbody').append(`<tr>
-                                                            <td scope="col" id="p_name">
-                                                                <a href=${protocol + '://' + domain}/service/${item.id}/> 
-                                                                    ${item.service}
-                                                                </a>
-                                                            </td>
-                                                            <td scope="col">${item.quantity}</td>
-                                                            <td scope="col">$ ${item.unit_price}</td>
-                                                            <td scope="col">${item.discount}% off</td>
-                                                            <td scope="col">${item.get_price_for_ordered_batch}</td>
-                                                        </tr>`);
-    }
 }
+
+// render order - quote
+function renderQuoteItems(desc, get_total) {
+     $orderModal.find('#order_summary tbody').append(
+            `<tr>
+                <td scope="col" colspan="4" id="p_name">
+                    ${desc}
+                </td>
+                <td scope="col">${get_total}</td>
+            </tr>`
+    );
+}
+
