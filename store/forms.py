@@ -36,6 +36,26 @@ class ServiceReviewForm(forms.ModelForm):
         return rating
 
 
+class OrderReviewForm(forms.ModelForm):
+    """ Add a review for a delivered order """
+    review = forms.CharField(widget=forms.Textarea)
+    rating = forms.DecimalField(widget=forms.HiddenInput,
+                                max_digits=1,
+                                decimal_places=0,
+                                validators=[MinValueValidator(0), MaxValueValidator(5)],
+                                initial=0)
+
+    class Meta:
+        model = Order
+        fields = ['review', 'rating']
+
+    def clean_rating(self):
+        rating = self.cleaned_data['rating']
+        if rating is None:
+            return self.field['rating'].initial
+        return rating
+
+
 class DeliveryForm(forms.ModelForm):
     """ Add delivery details to the order """
 
