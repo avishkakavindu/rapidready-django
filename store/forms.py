@@ -38,6 +38,7 @@ class ServiceReviewForm(forms.ModelForm):
 
 class OrderReviewForm(forms.ModelForm):
     """ Add a review for a delivered order """
+    id = forms.CharField(widget=forms.HiddenInput)
     review = forms.CharField(widget=forms.Textarea)
     rating = forms.DecimalField(widget=forms.HiddenInput,
                                 max_digits=1,
@@ -47,7 +48,7 @@ class OrderReviewForm(forms.ModelForm):
 
     class Meta:
         model = Order
-        fields = ['review', 'rating']
+        fields = ['id', 'review', 'rating']
 
     def clean_rating(self):
         rating = self.cleaned_data['rating']

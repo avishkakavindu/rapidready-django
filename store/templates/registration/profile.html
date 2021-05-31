@@ -268,6 +268,9 @@
                                                 </table>
                                             </div>
                                         </div>
+                                        <div class="container pb-3" id="order-reviews">
+                                            <!-- order reviews -->
+                                        </div>
                                         <div class="modal-footer text-center">
                                             <div class="col text-center">
                                                 <p>Thank you for your order</p>
@@ -479,7 +482,8 @@
 
                                                         {% if order.is_reviewed %}
                                                             <a class="float-end review-order" data-bs-toggle="modal"
-                                                               data-bs-target="#orderreviewModal">Review</a>
+                                                               data-bs-target="#orderreviewModal"
+                                                               data-service="{{ order.id }}">Review</a>
                                                         {% endif %}
                                                     </td>
                                                 </tr>
@@ -500,18 +504,18 @@
                                                             <i class="fa fa-times" aria-hidden="true"></i>
                                                         </a>
                                                     </div>
-                                                    <div class="modal-body">
-                                                        <form>
+                                                    <form method="post">
+                                                        <div class="modal-body">
+
+                                                            {% csrf_token %}
+                                                            {% render_field review_form.id class="form-control" %}
+                                                            {% render_field review_form.rating class="form-control" %}
                                                             <div class="mb-3">
-                                                                <label for="recipient-name" class="col-form-label">Recipient:</label>
-                                                                <input type="text" class="form-control"
-                                                                       id="recipient-name">
+                                                                <label for="{{ review_form.review.auto_id }}"
+                                                                       class="col-form-label">{{ review_form.review.label }}</label>
+                                                                {% render_field review_form.review class="form-control" %}
                                                             </div>
-                                                            <div class="mb-3">
-                                                                <label for="message-text" class="col-form-label">Message:</label>
-                                                                <textarea class="form-control"
-                                                                          id="message-text"></textarea>
-                                                            </div>
+                                                            {% render_field form.rating class="form-control" %}
                                                             <div class="rating-system">
                                                                 <span class="fa fa-star-o rate-me" data-toggle="tooltip"
                                                                       data-placement="top" title="Very bad"></span>
@@ -524,16 +528,18 @@
                                                                 <span class="fa fa-star-o rate-me" data-toggle="tooltip"
                                                                       data-placement="top" title="Excellent"></span>
                                                             </div>
-                                                        </form>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary"
-                                                                data-bs-dismiss="modal">Close
-                                                        </button>
-                                                        <button type="button" class="btn btn-primary">
-                                                            Review
-                                                        </button>
-                                                    </div>
+
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal">Close
+                                                            </button>
+                                                            <button type="submit" name='review_form'
+                                                                    class="btn btn-primary">
+                                                                Review
+                                                            </button>
+                                                        </div>
+                                                    </form>
                                                 </div>
                                             </div>
                                         </div>

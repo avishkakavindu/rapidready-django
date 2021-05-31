@@ -109,6 +109,7 @@ class Order(models.Model):
         default=0,
         validators=[MinValueValidator(0), MaxValueValidator(5)]
     )
+    rated_on = models.DateTimeField(default=datetime.now())
 
     def __str__(self):
         return '{}'.format(self.id)
