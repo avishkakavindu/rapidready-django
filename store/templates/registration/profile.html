@@ -172,7 +172,8 @@
                                                     <tr>
                                                         <th scope="col" colspan="2">
                                                             Order Details
-                                                            <span class="float-end" id="order_status"><!-- status --></span>
+                                                            <span class="float-end"
+                                                                  id="order_status"><!-- status --></span>
                                                         </th>
                                                     </tr>
                                                     </thead>
@@ -224,12 +225,12 @@
                                                 <table class="table table-sm table-bordered ordered-items"
                                                        id="order_summary">
                                                     <thead class="thead-light">
-                                                    <tr>
-                                                        <th scope="col">Service</th>
-                                                        <th scope="col">Quantity</th>
-                                                        <th scope="col">Unit Price</th>
-                                                        <th scope="col">Offers</th>
-                                                        <th scope="col">Total</th>
+                                                    <tr id="table-headings">
+                                                        {#                                                        <th scope="col">Service</th>#}
+                                                        {#                                                        <th scope="col">Quantity</th>#}
+                                                        {#                                                        <th scope="col">Unit Price</th>#}
+                                                        {#                                                        <th scope="col">Offers</th>#}
+                                                        {#                                                        <th scope="col">Total</th>#}
                                                     </tr>
                                                     </thead>
                                                     <tbody>
@@ -266,6 +267,9 @@
                                                     </tbody>
                                                 </table>
                                             </div>
+                                        </div>
+                                        <div class="container pb-3" id="order-reviews">
+                                            <!-- order reviews -->
                                         </div>
                                         <div class="modal-footer text-center">
                                             <div class="col text-center">
@@ -473,11 +477,72 @@
                                                     </td>
                                                     <td>{{ order.created_on }}</td>
                                                     <td>{{ order.get_total }}</td>
-                                                    <td>{{ order.order_status }}</td>
+                                                    <td>
+                                                        {{ order.order_status }}
+
+                                                        {% if order.is_reviewed %}
+                                                            <a class="float-end review-order" data-bs-toggle="modal"
+                                                               data-bs-target="#orderreviewModal"
+                                                               data-service="{{ order.id }}">Review</a>
+                                                        {% endif %}
+                                                    </td>
                                                 </tr>
                                             {% endfor %}
                                             </tbody>
                                         </table>
+
+                                        <!-- Vertically centered modal for order reviews -->
+                                        <div class="modal fade" id="orderreviewModal" tabindex="-1"
+                                             aria-labelledby="orderreviewModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">Review the
+                                                            service</h5>
+
+                                                        <a class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                            <i class="fa fa-times" aria-hidden="true"></i>
+                                                        </a>
+                                                    </div>
+                                                    <form method="post">
+                                                        <div class="modal-body">
+
+                                                            {% csrf_token %}
+                                                            {% render_field review_form.id class="form-control" %}
+                                                            {% render_field review_form.rating class="form-control" %}
+                                                            <div class="mb-3">
+                                                                <label for="{{ review_form.review.auto_id }}"
+                                                                       class="col-form-label">{{ review_form.review.label }}</label>
+                                                                {% render_field review_form.review class="form-control" %}
+                                                            </div>
+                                                            {% render_field form.rating class="form-control" %}
+                                                            <div class="rating-system">
+                                                                <span class="fa fa-star-o rate-me" data-toggle="tooltip"
+                                                                      data-placement="top" title="Very bad"></span>
+                                                                <span class="fa fa-star-o rate-me" data-toggle="tooltip"
+                                                                      data-placement="top" title="Poor"></span>
+                                                                <span class="fa fa-star-o rate-me" data-toggle="tooltip"
+                                                                      data-placement="top" title="Ok"></span>
+                                                                <span class="fa fa-star-o rate-me" data-toggle="tooltip"
+                                                                      data-placement="top" title="Good"></span>
+                                                                <span class="fa fa-star-o rate-me" data-toggle="tooltip"
+                                                                      data-placement="top" title="Excellent"></span>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal">Close
+                                                            </button>
+                                                            <button type="submit" name='review_form'
+                                                                    class="btn btn-primary">
+                                                                Review
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
                                     {% else %}
                                         <div class="alert alert-primary mt-2" role="alert">
                                             No orders found!

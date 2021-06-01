@@ -1,5 +1,5 @@
 from decimal import Decimal
-
+from django.db.models import Q
 from django.contrib.auth import login
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -23,7 +23,7 @@ from store.util import Util, token_generator
 from django.contrib.auth.models import User
 from django.contrib import messages
 from store.models import Service, Category, Review, Order, OrderedService, Quote, CartItem, Cart
-from store.forms import SignUpForm, ServiceReviewForm, DeliveryForm
+from store.forms import SignUpForm, ServiceReviewForm, DeliveryForm, OrderReviewForm
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.core import serializers
@@ -170,8 +170,34 @@ class ProfileView(LoginRequiredMixin, generic.UpdateView):
                 )
             )
         )
+        context['review_form'] = OrderReviewForm
 
         return context
+
+    def post(self, request, *arga, **kwargs):
+        self.object = self.get_object()
+        print('\n\n\n', request.POST)
+        if 'review_form' in request.POST:
+            try:
+                order = Order.objects.get(Q(review__isnull=True) | Q(review__exact=''), id=request.POST['id'])
+            except Order.DoesNotExist:
+                messages.error(self.request, 'Failed to save your review. Please retry!')
+                return redirect(self.success_url)
+
+            order.review = request.POST['review']
+            order.rating = request.POST['rating']
+            order.save()
+            messages.success(self.request, 'Review saved successfully!')
+        else:
+            form_class = self.get_form_class()
+            form_name = 'form'
+            form = self.get_form(form_class)
+
+            if form.is_valid():
+                messages.success(self.request, 'Profile info changed!')
+                return self.form_valid(form)
+            return self.form_invalid(**{form_name: form})
+        return redirect(self.success_url)
 
 
 class PasswordsChangeView(PasswordChangeView):

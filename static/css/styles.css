@@ -502,6 +502,11 @@ svg.radial-progress {
     color: #7F8FA4;
 }
 
+.review-order {
+    color: #007bff;
+    text-decoration: none;
+}
+
 .account-settings .user-profile {
     margin: 0 0 1rem 0;
     padding-bottom: 1rem;

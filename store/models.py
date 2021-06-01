@@ -102,6 +102,14 @@ class Order(models.Model):
     zipcode = models.CharField(max_length=10, null=False, blank=False)
     status = models.PositiveSmallIntegerField(choices=ORDER_STATUS, default=PENDING)
     created_on = models.DateTimeField(default=datetime.now())
+    review = models.TextField(null=True, blank=True)
+    rating = models.DecimalField(
+        max_digits=1,
+        decimal_places=0,
+        default=0,
+        validators=[MinValueValidator(0), MaxValueValidator(5)]
+    )
+    rated_on = models.DateTimeField(default=datetime.now())
 
     def __str__(self):
         return '{}'.format(self.id)
@@ -138,17 +146,17 @@ class Order(models.Model):
 
     @property
     def order_status(self):
-        if self.status == 1:
+        if self.status == self.PENDING:
             return format_html(
                 '<span style=""><i class="fa fa-spinner fa-pulse fa-fw pending mr" aria-hidden="true"></i></span> {}'.format(
                     self.get_status_display())
             )
-        elif self.status == 2:
+        elif self.status == self.PROCESSING:
             return format_html(
                 '<span style=""><i class="fa fa-cog fa-spin processing mr" aria-hidden="true"></i></span> {}'.format(
                     self.get_status_display())
             )
-        elif self.status == 3:
+        elif self.status == self.DELIVERED:
             return format_html(
                 '<span style=""><i class="fa fa-truck delivered mr" aria-hidden="true"></i></span> {}'.format(
                     self.get_status_display())
@@ -158,6 +166,12 @@ class Order(models.Model):
                 '<span style=""><i class="fa fa-ban canceled mr" aria-hidden="true"></i></span> {}'.format(
                     self.get_status_display())
             )
+
+    @property
+    def is_reviewed(self):
+        if self.status == self.DELIVERED and not self.review:
+            return True
+        return False
 
 
 class Category(models.Model):
