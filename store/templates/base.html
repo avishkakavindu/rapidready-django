@@ -93,10 +93,11 @@
             <form class="form-inline d-inline" id="search">
                 <div class="input-group input-group-sm">
                     <div class="input-group-prepend">
-                        <span class="input-group-text border-0" id="inputGroup-sizing-sm"><i
-                                class="fa fa-search"></i></span>
+                        <span class="input-group-text border-0" id="searchIcon"><i
+                                class="fa fa-search" aria-disabled="true" data-bs-toggle="modal"
+                                data-bs-target="#searchModal"></i></span>
                     </div>
-                    <input type="text" class="form-control bg-dark border-bottom" placeholder="search..."
+                    <input type="text" id='searchBox' class="form-control bg-dark border-bottom" placeholder="search..."
                            aria-label="Small" aria-describedby="inputGroup-sizing-sm">
                 </div>
             </form>
@@ -188,6 +189,29 @@
             <div class="modal-footer">
                 <div class="col text-center">
                     We will send you a emaill about your order!
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- search result modal-->
+<div class="modal fade" id="searchModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="searchBox-title">Search Result</h5>
+                <a class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </a>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <div class="col text-center">
+
                 </div>
             </div>
         </div>

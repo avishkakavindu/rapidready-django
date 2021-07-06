@@ -236,6 +236,7 @@
                                                 {% else %}
                                                     {% render_field form.review class="form-control" %}
                                                 {% endif %}
+                                                 {% render_field form.rating class="form-control" %}
                                                 <div class="invalid-feedback">
                                                     {% for error in form.review.errors %}
                                                         {{ error }}
