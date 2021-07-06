@@ -55,7 +55,7 @@ $('#getQuote button').click(function () {
     let desc = $('#quote_desc').val();
     let csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
     let payload = {
-        "url": `${$(location).attr('protocol')}//127.0.0.1:8000/quote/create/`,
+        "url": `${$(location).attr('protocol')}//${domain}/quote/create/`,
         "method": "POST",
         "data": {
             "csrfmiddlewaretoken": csrf_token,
@@ -81,7 +81,7 @@ $('#getQuote button').click(function () {
 // Get cart item count
 $('document').ready(function () {
     let payload = {
-        "url": `${$(location).attr('protocol')}//127.0.0.1:8000/cart-item/`,
+        "url": `${$(location).attr('protocol')}//${domain}/cart-item/`,
         "method": "GET",
         "timeout": 0,
         "dataType": "json",
@@ -96,7 +96,7 @@ $('#add-to-cart').click(function () {
     let csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
 
     let payload = {
-        "url": `${$(location).attr('protocol')}//127.0.0.1:8000/cart-item/`,
+        "url": `${$(location).attr('protocol')}//${domain}/cart-item/`,
         "method": "POST",
         "timeout": 0,
         "dataType": "json",
@@ -128,7 +128,7 @@ $('.update-quantity').change(function () {
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
     let payload = {
-        "url": `${$(location).attr('protocol')}//127.0.0.1:8000/cart-detail/`,
+        "url": `${$(location).attr('protocol')}//${domain}/cart-detail/`,
         "method": "PUT",
         "timeout": 0,
         "headers": {
@@ -161,7 +161,7 @@ $('.delete-item').click(function () {
     $(this).parent().parent().remove();
 
     let payload = {
-        "url": `${$(location).attr('protocol')}//127.0.0.1:8000/cart-item/${item}/`,
+        "url": `${$(location).attr('protocol')}//${domain}/cart-item/${item}/`,
         "method": "DELETE",
         "timeout": 0,
         "headers": {
@@ -178,3 +178,69 @@ $('.delete-item').click(function () {
         $('#cart-total').text(response['total']);
     });
 });
+
+
+$('#searchIcon').click(function () {
+    let keyword = $('#searchBox').val();
+    console.log('keyword: ', keyword);
+
+
+    let payload = {
+        "url": `${$(location).attr('protocol')}//${domain}/search/?search=${keyword}`,
+        "method": "GET",
+        "timeout": 0,
+        "headers": {
+            "Content-Type": "application/json"
+        },
+    };
+    console.log(payload);
+    $.ajax(payload).done(function (response) {
+        console.log(response);
+        response.forEach(renderSearchResult);
+    });
+});
+
+// renders search results into modal
+function renderSearchResult(result, index) {
+    const search_modal = $('#searchModal').find('.modal-body');
+
+
+    search_modal.append(
+        `
+        <div class="card mb-3 border" style="max-width: 100%;">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <img src="${result['image']}" class="img-fluid rounded-start"
+                         alt="service name">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title">${result['service']}</h5>
+                        <p class="card-text">
+                            ${result['desc']}
+                        </p>
+    
+                        <div class="pricing">
+                            <p>
+                                <span>Price:</span>
+                                    <span class="price-actual">
+                                        ${result['price']}
+                                    </span>         
+                            </p>
+                            <div class="row">
+                                <a href="/service/${result['id']}" type="button"
+                                    class="btn btn-outline-primary update-cart"
+                                        data-action="add-serving"
+                                        data-service="{{ service.id }}">
+                                    <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+                                        <span> Shop Now</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `);
+
+}

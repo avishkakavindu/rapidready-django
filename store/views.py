@@ -18,7 +18,7 @@ from rest_framework import permissions, status
 from rest_framework.views import APIView
 
 from store.permissions import IsOwner
-from store.serializers import OrderSerializer, QuoteSerializer, CartItemSerializer, CartSerializer
+from store.serializers import OrderSerializer, QuoteSerializer, CartItemSerializer, CartSerializer, ServiceSerializer
 from store.util import Util, token_generator
 from django.contrib.auth.models import User
 from django.contrib import messages
@@ -27,9 +27,10 @@ from store.forms import SignUpForm, ServiceReviewForm, DeliveryForm, OrderReview
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.core import serializers
-from rest_framework.generics import RetrieveAPIView, CreateAPIView, GenericAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import RetrieveAPIView, CreateAPIView, GenericAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from rest_framework.response import Response
 from rest_framework.mixins import CreateModelMixin, DestroyModelMixin, UpdateModelMixin, RetrieveModelMixin
+from rest_framework import filters
 
 User = get_user_model()
 
@@ -201,6 +202,7 @@ class ProfileView(LoginRequiredMixin, generic.UpdateView):
 
 
 class PasswordsChangeView(PasswordChangeView):
+    """ Password reset view """
     form_class = PasswordChangeForm
     success_url = reverse_lazy('profile')
 
@@ -384,7 +386,6 @@ class QuoteDeleteView(generic.View):
             return redirect('home')
 
 
-
 class OrderRetriewAPIView(RetrieveAPIView):
     """ Retrieves Order details API view """
 
@@ -442,7 +443,7 @@ class CartItemAPIView(CreateModelMixin, GenericAPIView):
 
 
 class CartItemDestroyAPIView(APIView):
-    """ Destroy Cat item API view """
+    """ Destroy Cart item API view """
 
     def get_object(self, pk):
         try:
@@ -458,7 +459,7 @@ class CartItemDestroyAPIView(APIView):
 
 
 class CartAPIView(RetrieveUpdateDestroyAPIView):
-    """ Cart AOI view  """
+    """ Cart API view  """
 
     serializer_class = CartSerializer
     queryset = Cart.objects.all()
@@ -472,3 +473,10 @@ class CartAPIView(RetrieveUpdateDestroyAPIView):
         return cart
 
 
+class ServiceListView(ListAPIView):
+    """ Service API View """
+
+    queryset = Service.objects.all()
+    serializer_class = ServiceSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['service', 'desc', 'category__category']

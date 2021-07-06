@@ -92,7 +92,7 @@ function renderToModal(payload) {
                                                         </tr>
     `);
     $orderModal.find('#order-reviews').empty().append(
-        `<div class="row reviews">
+        `<div class="row reviews alert alert-warning">
             <h6 class="pt-3 border-bottom"> Your review</h6>
             <div class="col-md col-lg">
                 <p class="review-desc">

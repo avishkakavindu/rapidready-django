@@ -83,5 +83,11 @@ class CartSerializer(serializers.ModelSerializer):
         return instance
 
 
+class ServiceSerializer(serializers.ModelSerializer):
+    """ Serializer for Service model """
+
+    class Meta:
+        model = Service
+        fields = '__all__'
 
 
