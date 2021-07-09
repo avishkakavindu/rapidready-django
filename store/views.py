@@ -473,7 +473,7 @@ class CartAPIView(RetrieveUpdateDestroyAPIView):
         return cart
 
 
-class ServiceListView(ListAPIView):
+class ServiceListAPIView(ListAPIView):
     """ Service API View """
 
     queryset = Service.objects.all()
