@@ -114,7 +114,7 @@ class SignUpView(generic.CreateView):
 
                 return render(self.request, 'registration/confirm_email.html', {'email': user.email})
         # if no record found pass to form_valid
-        return self.form_valid(form)
+        return super().post(request, *args, **kwargs)
 
 
 class UserActivationView(generic.View):
@@ -473,7 +473,7 @@ class CartAPIView(RetrieveUpdateDestroyAPIView):
         return cart
 
 
-class ServiceListView(ListAPIView):
+class ServiceListAPIView(ListAPIView):
     """ Service API View """
 
     queryset = Service.objects.all()

@@ -40,7 +40,7 @@ urlpatterns = [
     # ---------------------
     # services
     path('service/<int:pk>/', ServiceView.as_view(), name='service'),
-    path('search/', ServiceListView.as_view(), name='search'),
+    path('search/', ServiceListAPIView.as_view(), name='search'),
     # ---------------------
     # orders
     path('order/<int:pk>/', OrderRetriewAPIView.as_view(), name='retrieve-order'),
