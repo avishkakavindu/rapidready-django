@@ -5,5 +5,4 @@ __pycache__
 static/admin
 /venv/
 /.env
-/media/
 /chromedriver.exe
